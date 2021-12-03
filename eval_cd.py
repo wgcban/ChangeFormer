@@ -17,6 +17,8 @@ def main():
     parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
     parser.add_argument('--project_name', default='test', type=str)
     parser.add_argument('--print_models', default=False, type=bool, help='print models')
+    parser.add_argument('--checkpoints_root', default='checkpoints', type=str)
+    parser.add_argument('--vis_root', default='vis', type=str)
 
     # data
     parser.add_argument('--num_workers', default=4, type=int)
@@ -39,11 +41,15 @@ def main():
     utils.get_device(args)
     print(args.gpu_ids)
 
+    print("CHAMINDA")
     #  checkpoints dir
-    args.checkpoint_dir = os.path.join('checkpoints', args.project_name)
+    args.checkpoint_dir = os.path.join(args.checkpoints_root, args.project_name)
+    print('---')
+    print(args.checkpoint_dir)
+    print('---')
     os.makedirs(args.checkpoint_dir, exist_ok=True)
     #  visualize dir
-    args.vis_dir = os.path.join('vis', args.project_name)
+    args.vis_dir = os.path.join(args.vis_root, args.project_name)
     os.makedirs(args.vis_dir, exist_ok=True)
 
     dataloader = utils.get_loader(args.data_name, img_size=args.img_size,
