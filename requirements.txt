@@ -1,0 +1,11 @@
+torch>=1.1.0
+torchvision
+dominate
+matplotlib>=3.1.1
+opencv-python>=4.1.1.26
+tensorboard
+tqdm>=4.38.0
+numpy>=1.16.3
+cython
+imageio>=2.5.0
+scikit-image>=0.15.0

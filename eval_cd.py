@@ -28,7 +28,7 @@ def main():
     parser.add_argument('--batch_size', default=8, type=int)
     parser.add_argument('--split', default="test", type=str)
 
-    parser.add_argument('--img_size', default=256, type=int)
+    parser.add_argument('--img_size', default=1024, type=int)
 
     # model
     parser.add_argument('--n_class', default=2, type=int)
@@ -41,12 +41,8 @@ def main():
     utils.get_device(args)
     print(args.gpu_ids)
 
-    print("CHAMINDA")
     #  checkpoints dir
     args.checkpoint_dir = os.path.join(args.checkpoints_root, args.project_name)
-    print('---')
-    print(args.checkpoint_dir)
-    print('---')
     os.makedirs(args.checkpoint_dir, exist_ok=True)
     #  visualize dir
     args.vis_dir = os.path.join(args.vis_root, args.project_name)
