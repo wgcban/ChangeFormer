@@ -10,6 +10,7 @@ from timm.models.layers import DropPath, to_2tuple, trunc_normal_
 import types
 import math
 from abc import ABCMeta, abstractmethod
+from mmcv.cnn import normal_init
 from mmcv.cnn import ConvModule
 import pdb
 
@@ -545,106 +546,11 @@ class DWConv(nn.Module):
 
         return x
 
-class DecoderTransformer(nn.Module):
-    def __init__(self, img_size=224, patch_size=16, in_chans=3, num_classes=1000, embed_dims=[64, 128, 256, 512],
-                 num_heads=[1, 2, 4, 8], mlp_ratios=[4, 4, 4, 4], qkv_bias=False, qk_scale=None, drop_rate=0.,
-                 attn_drop_rate=0., drop_path_rate=0., norm_layer=nn.LayerNorm,
-                 depths=[3, 4, 6, 3], sr_ratios=[8, 4, 2, 1]):
-        super().__init__()
-        self.num_classes = num_classes
-        self.depths = depths
-
-        # patch_embed
-        self.patch_embed1 = OverlapPatchEmbed(img_size=img_size//16, patch_size=3, stride=2, in_chans=embed_dims[3],
-                                              embed_dim=embed_dims[3])
-
-        # transformer decoder
-        dpr = [x.item() for x in torch.linspace(0, drop_path_rate, sum(depths))]  # stochastic depth decay rule
-        cur = 0
-        self.block1 = nn.ModuleList([Block_dec(
-            dim=embed_dims[3], num_heads=num_heads[3], mlp_ratio=mlp_ratios[3], qkv_bias=qkv_bias, qk_scale=qk_scale,
-            drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer,
-            sr_ratio=sr_ratios[3])
-            for i in range(depths[0])])
-        self.norm1 = norm_layer(embed_dims[3])
-
-        cur += depths[0]
-        
-
-        self.apply(self._init_weights)
-
-    def _init_weights(self, m):
-        if isinstance(m, nn.Linear):
-            trunc_normal_(m.weight, std=.02)
-            if isinstance(m, nn.Linear) and m.bias is not None:
-                nn.init.constant_(m.bias, 0)
-        elif isinstance(m, nn.LayerNorm):
-            nn.init.constant_(m.bias, 0)
-            nn.init.constant_(m.weight, 1.0)
-        elif isinstance(m, nn.Conv2d):
-            fan_out = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
-            fan_out //= m.groups
-            m.weight.data.normal_(0, math.sqrt(2.0 / fan_out))
-            if m.bias is not None:
-                m.bias.data.zero_()
-
-    def init_weights(self, pretrained=None):
-        if isinstance(pretrained, str):
-            logger = get_root_logger()
-            load_checkpoint(self, pretrained, map_location='cpu', strict=False, logger=logger)
-
-    def reset_drop_path(self, drop_path_rate):
-        dpr = [x.item() for x in torch.linspace(0, drop_path_rate, sum(self.depths))]
-        cur = 0
-        for i in range(self.depths[0]):
-            self.block1[i].drop_path.drop_prob = dpr[cur + i]
-
-        cur += self.depths[0]
-        for i in range(self.depths[1]):
-            self.block2[i].drop_path.drop_prob = dpr[cur + i]
-
-        cur += self.depths[1]
-        for i in range(self.depths[2]):
-            self.block3[i].drop_path.drop_prob = dpr[cur + i]
-
-        cur += self.depths[2]
-        for i in range(self.depths[3]):
-            self.block4[i].drop_path.drop_prob = dpr[cur + i]
-
-    
-    def forward_features(self, x):
-        x=x[3]
-        B = x.shape[0]
-        outs = []
-        
-        # stage 1
-        x, H, W = self.patch_embed1(x)
-        for i, blk in enumerate(self.block1):
-            x = blk(x, H, W)
-        x = self.norm1(x)
-        x = x.reshape(B, H, W, -1).permute(0, 3, 1, 2).contiguous()
-        outs.append(x)
-
-        return outs
-
-    def forward(self, x):
-        x = self.forward_features(x)
-        # x = self.head(x)
-
-        return x
-
 class Tenc(EncoderTransformer):
     def __init__(self, **kwargs):
         super(Tenc, self).__init__(
             patch_size=4, embed_dims=[64, 128, 320, 512], num_heads=[1, 2, 4, 4], mlp_ratios=[2, 2, 2, 2],
             qkv_bias=True, norm_layer=partial(nn.LayerNorm, eps=1e-6), depths=[2, 2, 2, 2], sr_ratios=[4, 2, 2, 1],
-            drop_rate=0.0, drop_path_rate=0.1)
-
-class Tdec(DecoderTransformer):
-    def __init__(self, **kwargs):
-        super(Tdec, self).__init__(
-            patch_size=4, embed_dims=[64, 128, 320, 512], num_heads=[1, 2, 5, 8], mlp_ratios=[4, 4, 4, 4],
-            qkv_bias=True, norm_layer=partial(nn.LayerNorm, eps=1e-6), depths=[3, 4, 6, 3], sr_ratios=[8, 4, 2, 1],
             drop_rate=0.0, drop_path_rate=0.1)
 
 
@@ -720,9 +626,7 @@ class convprojection_base(nn.Module):
         self.convd2x = UpsampleConvLayer(64, 16, kernel_size=4, stride=2)
         self.dense_1 = nn.Sequential( ResidualBlock(16))
         self.convd1x = UpsampleConvLayer(16, 8, kernel_size=4, stride=2)
-        self.conv_output = ConvLayer(8, 3, kernel_size=3, stride=1, padding=1)
-
-        self.active = nn.Tanh()        
+        self.conv_output = ConvLayer(8, 3, kernel_size=3, stride=1, padding=1)   
 
     def forward(self,x1):
 
@@ -762,8 +666,7 @@ class convprojection_base(nn.Module):
 
         return x
 
-
-## The following is the network which can be fine-tuned for specific datasets
+### This is the basic ChangeFormer module
 class ChangeFormerV1(nn.Module):
 
     def __init__(self, input_nc=3, output_nc=2, decoder_softmax=False):
@@ -796,6 +699,181 @@ class ChangeFormerV1(nn.Module):
 
         return cp
 
+# Transformer Decoder
+class MLP(nn.Module):
+    """
+    Linear Embedding
+    """
+    def __init__(self, input_dim=2048, embed_dim=768):
+        super().__init__()
+        self.proj = nn.Linear(input_dim, embed_dim)
+
+    def forward(self, x):
+        x = x.flatten(2).transpose(1, 2)
+        x = self.proj(x)
+        return x
+
+
+class TDec(nn.Module):
+    """
+    Transformer Decoder
+    """
+    def __init__(self, input_transform='multiple_select', in_index=[0, 1, 2, 3], align_corners=True, 
+                    in_channels = [64, 128, 256, 512], embedding_dim= 256, output_nc=2, 
+                    decoder_softmax = False, feature_strides=[4, 8, 16, 32]):
+        super(TDec, self).__init__()
+        assert len(feature_strides) == len(in_channels)
+        assert min(feature_strides) == feature_strides[0]
+        self.feature_strides = feature_strides
+
+        #input transforms
+        self.input_transform = input_transform
+        self.in_index = in_index
+        self.align_corners = align_corners
+
+        #MLP
+        self.in_channels = in_channels
+        self.embedding_dim = embedding_dim
+
+        #Final prediction
+        self.output_nc = output_nc
+
+        c1_in_channels, c2_in_channels, c3_in_channels, c4_in_channels = self.in_channels
+
+        self.linear_c4 = MLP(input_dim=c4_in_channels, embed_dim=self.embedding_dim)
+        self.linear_c3 = MLP(input_dim=c3_in_channels, embed_dim=self.embedding_dim)
+        self.linear_c2 = MLP(input_dim=c2_in_channels, embed_dim=self.embedding_dim)
+        self.linear_c1 = MLP(input_dim=c1_in_channels, embed_dim=self.embedding_dim)
+
+        self.linear_fuse = nn.Conv2d(   in_channels=self.embedding_dim*4, out_channels=self.embedding_dim,
+                                        kernel_size=1)
+
+        #self.linear_pred = nn.Conv2d(embedding_dim, self.num_classes, kernel_size=1)
+        self.convd2x    = UpsampleConvLayer(self.embedding_dim, self.embedding_dim, kernel_size=4, stride=2)
+        self.dense_2x   = nn.Sequential( ResidualBlock(self.embedding_dim))
+        self.convd1x    = UpsampleConvLayer(self.embedding_dim, self.embedding_dim, kernel_size=4, stride=2)
+        self.dense_1x   = nn.Sequential( ResidualBlock(self.embedding_dim))
+
+        #Final prediction
+        self.change_probability = ConvLayer(self.embedding_dim, self.output_nc, kernel_size=3, stride=1, padding=1)
+        self.output_softmax     = decoder_softmax
+        self.active             = nn.Softmax(dim=1) 
+
+    def _transform_inputs(self, inputs):
+        """Transform inputs for decoder.
+        Args:
+            inputs (list[Tensor]): List of multi-level img features.
+        Returns:
+            Tensor: The transformed inputs
+        """
+
+        if self.input_transform == 'resize_concat':
+            inputs = [inputs[i] for i in self.in_index]
+            upsampled_inputs = [
+                resize(
+                    input=x,
+                    size=inputs[0].shape[2:],
+                    mode='bilinear',
+                    align_corners=self.align_corners) for x in inputs
+            ]
+            inputs = torch.cat(upsampled_inputs, dim=1)
+        elif self.input_transform == 'multiple_select':
+            inputs = [inputs[i] for i in self.in_index]
+        else:
+            inputs = inputs[self.in_index]
+
+        return inputs
+
+    def forward(self, inputs):
+        x = self._transform_inputs(inputs)  # len=4, 1/4,1/8,1/16,1/32
+        c1, c2, c3, c4 = x
+
+        ############## MLP decoder on C1-C4 ###########
+        n, _, h, w = c4.shape
+
+        _c4 = self.linear_c4(c4).permute(0,2,1).reshape(n, -1, c4.shape[2], c4.shape[3])
+        _c4 = resize(_c4, size=c1.size()[2:],mode='bilinear',align_corners=False)
+
+        _c3 = self.linear_c3(c3).permute(0,2,1).reshape(n, -1, c3.shape[2], c3.shape[3])
+        _c3 = resize(_c3, size=c1.size()[2:],mode='bilinear',align_corners=False)
+
+        _c2 = self.linear_c2(c2).permute(0,2,1).reshape(n, -1, c2.shape[2], c2.shape[3])
+        _c2 = resize(_c2, size=c1.size()[2:],mode='bilinear',align_corners=False)
+
+        _c1 = self.linear_c1(c1).permute(0,2,1).reshape(n, -1, c1.shape[2], c1.shape[3])
+
+        _c = self.linear_fuse(torch.cat([_c4, _c3, _c2, _c1], dim=1))
+
+        x = self.convd2x(_c)
+        x = self.dense_2x(x)
+        x = self.convd1x(x)
+        x = self.dense_1x(x)
+
+        cp = self.change_probability(x)
+        if self.output_softmax:
+            cp = self.active(cp)
+
+        return cp
+
+# ChangeFormerV2:
+# Transformer encoder to extract features
+# Feature differencing and pass it through Transformer decoder
+class ChangeFormerV2(nn.Module):
+
+    def __init__(self, input_nc=3, output_nc=2, decoder_softmax=False):
+        super(ChangeFormerV2, self).__init__()
+
+        self.Tenc   = Tenc( patch_size=4, embed_dims=[64, 128, 320, 512], num_heads=[1,2,4,8], 
+                            mlp_ratios=[2, 2, 2, 2], qkv_bias=True, norm_layer=partial(nn.LayerNorm, 
+                            eps=1e-6), depths=[3, 4, 6, 3], sr_ratios=[8,4,2,1], drop_rate=0.0, 
+                            drop_path_rate=0.1)
+        
+        self.TDec   = TDec( input_transform='multiple_select', in_index=[0, 1, 2, 3], align_corners=True, 
+                            in_channels = [64, 128, 320, 512], embedding_dim= 256, output_nc=output_nc, 
+                            decoder_softmax = decoder_softmax, feature_strides=[4, 8, 16, 32])
+
+    def forward(self, x1, x2):
+
+        fx1 = self.Tenc(x1)
+        fx2 = self.Tenc(x2)
+
+        DI = []
+        for i in range(0,4):
+            DI.append(torch.abs(fx1[i] - fx2[i]))
+
+        cp = self.TDec(DI)
+
+        return cp
+
+# ChangeFormerV3:
+# Transformer encoder to extract features
+# Concatenate the features and pass it through Transformer decoder
+class ChangeFormerV3(nn.Module):
+
+    def __init__(self, input_nc=3, output_nc=2, decoder_softmax=False):
+        super(ChangeFormerV3, self).__init__()
+
+        self.Tenc   = Tenc( patch_size=4, embed_dims=[64, 128, 320, 512], num_heads=[1,2,4,8], 
+                            mlp_ratios=[2, 2, 2, 2], qkv_bias=True, norm_layer=partial(nn.LayerNorm, 
+                            eps=1e-6), depths=[3, 4, 6, 3], sr_ratios=[8,4,2,1], drop_rate=0.0, 
+                            drop_path_rate=0.1)
+        
+        self.TDec   = TDec( input_transform='multiple_select', in_index=[0, 1, 2, 3], align_corners=True, 
+                            in_channels = [128, 256, 640, 1024], embedding_dim= 256, output_nc=output_nc, 
+                            decoder_softmax = decoder_softmax, feature_strides=[4, 8, 16, 32])
+
+    def forward(self, x1, x2):
+
+        fx1 = self.Tenc(x1)
+        fx2 = self.Tenc(x2)
+
+        FEATURES = []
+        for i in range(0,4):
+            FEATURES.append(torch.cat((fx1[i], fx2[i]), dim=1))
+
+        cp = self.TDec(FEATURES)
+
+        return cp
 
 ## The following is original network found in paper which solves all-weather removal problems 
 ## using a single model

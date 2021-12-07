@@ -11,6 +11,7 @@ import torch.optim as optim
 from misc.metric_tool import ConfuseMatrixMeter
 from models.losses import cross_entropy
 import models.losses as losses
+from models.losses import get_alpha, softmax_helper, FocalLoss
 
 from misc.logger_tool import Logger, Timer
 
@@ -80,6 +81,11 @@ class CDTrainer():
             self._pxl_loss = cross_entropy
         elif args.loss == 'bce':
             self._pxl_loss = losses.binary_ce
+        elif args.loss == 'fl':
+            print('\n Calculating alpha in Focal-Loss (FL) ...')
+            alpha           = get_alpha(dataloaders['train']) # calculare class occurences
+            print(f"alpha-0 (no-change)={alpha[0]}, alpha-1 (change)={alpha[1]}")
+            self._pxl_loss  = FocalLoss(apply_nonlin = softmax_helper, alpha = alpha, gamma = 2, smooth = 1e-5)
         else:
             raise NotImplemented(args.loss)
 

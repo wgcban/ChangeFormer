@@ -28,7 +28,7 @@ def main():
     parser.add_argument('--batch_size', default=8, type=int)
     parser.add_argument('--split', default="test", type=str)
 
-    parser.add_argument('--img_size', default=1024, type=int)
+    parser.add_argument('--img_size', default=256, type=int)
 
     # model
     parser.add_argument('--n_class', default=2, type=int)
