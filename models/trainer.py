@@ -11,7 +11,7 @@ import torch.optim as optim
 from misc.metric_tool import ConfuseMatrixMeter
 from models.losses import cross_entropy
 import models.losses as losses
-from models.losses import get_alpha, softmax_helper, FocalLoss
+from models.losses import get_alpha, softmax_helper, FocalLoss, mIoULoss
 
 from misc.logger_tool import Logger, Timer
 
@@ -28,6 +28,9 @@ class CDTrainer():
         # define G
         self.net_G = define_G(args=args, gpu_ids=args.gpu_ids)
 
+        if args.pretrain is not None:
+            self.net_G.load_state_dict(torch.load(args.pretrain), strict=False)
+
         self.device = torch.device("cuda:%s" % args.gpu_ids[0] if torch.cuda.is_available() and len(args.gpu_ids)>0
                                    else "cpu")
         print(self.device)
@@ -36,9 +39,13 @@ class CDTrainer():
         self.lr = args.lr
 
         # define optimizers
-        self.optimizer_G = optim.SGD(self.net_G.parameters(), lr=self.lr,
+        if args.optimizer == "sgd":
+            self.optimizer_G = optim.SGD(self.net_G.parameters(), lr=self.lr,
                                      momentum=0.9,
                                      weight_decay=5e-4)
+        elif args.optimizer == "adam":
+            self.optimizer_G = optim.Adam(self.net_G.parameters(), lr=self.lr,
+                                     weight_decay=0)
 
         # self.optimizer_G = optim.Adam(self.net_G.parameters(), lr=self.lr)
 
@@ -86,6 +93,9 @@ class CDTrainer():
             alpha           = get_alpha(dataloaders['train']) # calculare class occurences
             print(f"alpha-0 (no-change)={alpha[0]}, alpha-1 (change)={alpha[1]}")
             self._pxl_loss  = FocalLoss(apply_nonlin = softmax_helper, alpha = alpha, gamma = 2, smooth = 1e-5)
+        elif args.loss == "miou":
+            weights = torch.tensor([1.0, 1.0]).cuda()
+            self._pxl_loss = mIoULoss(weight=weights, size_average=True, n_classes=args.n_class).cuda()
         else:
             raise NotImplemented(args.loss)
 

@@ -31,6 +31,7 @@ class CDDataAugmentation:
             with_random_crop=False,
             with_scale_random_crop=False,
             with_random_blur=False,
+            random_color_tf=False
     ):
         self.img_size = img_size
         if self.img_size is None:
@@ -43,6 +44,7 @@ class CDDataAugmentation:
         self.with_random_crop = with_random_crop
         self.with_scale_random_crop = with_scale_random_crop
         self.with_random_blur = with_random_blur
+        self.random_color_tf=random_color_tf
     def transform(self, imgs, labels, to_tensor=True):
         """
         :param imgs: [ndarray,]
@@ -85,7 +87,7 @@ class CDDataAugmentation:
 
         if self.with_random_crop and random.random() > 0:
             i, j, h, w = transforms.RandomResizedCrop(size=self.img_size). \
-                get_params(img=imgs[0], scale=(0.8, 1.0), ratio=(1, 1))
+                get_params(img=imgs[0], scale=(0.8, 1.2), ratio=(1, 1))
 
             imgs = [TF.resized_crop(img, i, j, h, w,
                                     size=(self.img_size, self.img_size),
@@ -117,6 +119,18 @@ class CDDataAugmentation:
             imgs = [img.filter(ImageFilter.GaussianBlur(radius=radius))
                     for img in imgs]
 
+        if self.random_color_tf:
+            color_jitter = transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1)
+            imgs_tf = []
+            for img in imgs:
+                tf = transforms.ColorJitter.get_params(
+                            color_jitter.brightness, 
+                            color_jitter.contrast, 
+                            color_jitter.saturation,
+                            color_jitter.hue)
+                imgs_tf.append(tf(img))
+            imgs = imgs_tf
+            
         if to_tensor:
             # to tensor
             imgs = [TF.to_tensor(img) for img in imgs]

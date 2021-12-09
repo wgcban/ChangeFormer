@@ -9,7 +9,7 @@ from einops import rearrange
 
 import models
 from models.help_funcs import Transformer, TransformerDecoder, TwoLayerConv2d
-from models.ChangeFormer import ChangeFormerV1, ChangeFormerV2, ChangeFormerV3
+from models.ChangeFormer import ChangeFormerV1, ChangeFormerV2, ChangeFormerV3, ChangeFormerV4
 
 ###############################################################################
 # Helper Functions
@@ -144,6 +144,9 @@ def define_G(args, init_type='normal', init_gain=0.02, gpu_ids=[]):
 
     elif args.net_G == 'ChangeFormerV3':
         net = ChangeFormerV3() #ChangeFormer with Transformer Encoder and Convolutional Decoder (Fuse)
+
+    elif args.net_G == 'ChangeFormerV4':
+        net = ChangeFormerV4() #ChangeFormer with Transformer Encoder and Convolutional Decoder (Fuse)
 
     else:
         raise NotImplementedError('Generator model name [%s] is not recognized' % args.net_G)

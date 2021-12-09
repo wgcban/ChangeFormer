@@ -4,6 +4,8 @@ import torch.nn.functional
 import torch.nn.functional as F
 from functools import partial
 from models.ChangeFormerBaseNetworks import *
+from models.help_funcs import TwoLayerConv2d
+import torch.nn.functional as F
 
 import timm
 from timm.models.layers import DropPath, to_2tuple, trunc_normal_
@@ -13,6 +15,8 @@ from abc import ABCMeta, abstractmethod
 from mmcv.cnn import normal_init
 from mmcv.cnn import ConvModule
 import pdb
+
+from models.pixel_shuffel_up import PS_UP
 
 class EncoderTransformer(nn.Module):
     def __init__(self, img_size=256, patch_size=16, in_chans=3, num_classes=2, embed_dims=[64, 128, 256, 512],
@@ -32,16 +36,6 @@ class EncoderTransformer(nn.Module):
                                               embed_dim=embed_dims[2])
         self.patch_embed4 = OverlapPatchEmbed(img_size=img_size // 16, patch_size=3, stride=2, in_chans=embed_dims[2],
                                               embed_dim=embed_dims[3])
-        
-        # for Intra-patch transformer blocks
-        # self.mini_patch_embed1 = OverlapPatchEmbed(img_size=img_size // 4, patch_size=3, stride=2, in_chans=embed_dims[0],
-        #                   embed_dim=embed_dims[1])
-        # self.mini_patch_embed2 = OverlapPatchEmbed(img_size=img_size // 8, patch_size=3, stride=2, in_chans=embed_dims[1],
-        #                                       embed_dim=embed_dims[2])
-        # self.mini_patch_embed3 = OverlapPatchEmbed(img_size=img_size // 16, patch_size=3, stride=2, in_chans=embed_dims[2],
-        #                                       embed_dim=embed_dims[3])
-        # self.mini_patch_embed4 = OverlapPatchEmbed(img_size=img_size // 32, patch_size=3, stride=2, in_chans=embed_dims[0],
-        #                                       embed_dim=embed_dims[3])
 
         # main  encoder
         dpr = [x.item() for x in torch.linspace(0, drop_path_rate, sum(depths))]  # stochastic depth decay rule
@@ -144,24 +138,17 @@ class EncoderTransformer(nn.Module):
         embed_dims=[64, 128, 320, 512]
         # stage 1
         x1, H1, W1 = self.patch_embed1(x)
-        #x2, H2, W2 = self.mini_patch_embed1(x1.permute(0,2,1).reshape(B,embed_dims[0],H1,W1))
 
         for i, blk in enumerate(self.block1):
             x1 = blk(x1, H1, W1)
         x1 = self.norm1(x1)
         x1 = x1.reshape(B, H1, W1, -1).permute(0, 3, 1, 2).contiguous()
-        
-        # for i, blk in enumerate(self.patch_block1):
-        #     x2 = blk(x2, H2, W2)
-        # x2 = self.pnorm1(x2)
-        # x2 = x2.reshape(B, H2, W2, -1).permute(0, 3, 1, 2).contiguous()
 
         outs.append(x1)
 
         # stage 2
         x1, H1, W1 = self.patch_embed2(x1)
-        x1 = x1.permute(0,2,1).reshape(B,embed_dims[1],H1,W1) #+x2
-        # x2, H2, W2 = self.mini_patch_embed2(x1)
+        x1 = x1.permute(0,2,1).reshape(B,embed_dims[1],H1,W1)
 
         x1 = x1.view(x1.shape[0],x1.shape[1],-1).permute(0,2,1)
 
@@ -171,16 +158,9 @@ class EncoderTransformer(nn.Module):
         x1 = x1.reshape(B, H1, W1, -1).permute(0, 3, 1, 2).contiguous()
         outs.append(x1)
 
-        # for i, blk in enumerate(self.patch_block2):
-        #     x2 = blk(x2, H2, W2)
-        # x2 = self.pnorm2(x2)
-        # x2 = x2.reshape(B, H2, W2, -1).permute(0, 3, 1, 2).contiguous()
-
-        
         # stage 3
         x1, H1, W1 = self.patch_embed3(x1)
-        x1 = x1.permute(0,2,1).reshape(B,embed_dims[2],H1,W1) #+x2
-        #x2, H2, W2 = self.mini_patch_embed3(x1)
+        x1 = x1.permute(0,2,1).reshape(B,embed_dims[2],H1,W1)
 
         x1 = x1.view(x1.shape[0],x1.shape[1],-1).permute(0,2,1)
 
@@ -189,11 +169,6 @@ class EncoderTransformer(nn.Module):
         x1 = self.norm3(x1)
         x1 = x1.reshape(B, H1, W1, -1).permute(0, 3, 1, 2).contiguous()
         outs.append(x1)
-        
-        # for i, blk in enumerate(self.patch_block3):
-        #     x2 = blk(x2, H2, W2)
-        # x2 = self.pnorm3(x2)
-        # x2 = x2.reshape(B, H2, W2, -1).permute(0, 3, 1, 2).contiguous()
 
         # stage 4
         x1, H1, W1 = self.patch_embed4(x1)
@@ -549,8 +524,8 @@ class DWConv(nn.Module):
 class Tenc(EncoderTransformer):
     def __init__(self, **kwargs):
         super(Tenc, self).__init__(
-            patch_size=4, embed_dims=[64, 128, 320, 512], num_heads=[1, 2, 4, 4], mlp_ratios=[2, 2, 2, 2],
-            qkv_bias=True, norm_layer=partial(nn.LayerNorm, eps=1e-6), depths=[2, 2, 2, 2], sr_ratios=[4, 2, 2, 1],
+            patch_size=16, embed_dims=[64, 128, 320, 512], num_heads=[1, 2, 4, 8], mlp_ratios=[4, 4, 4, 4],
+            qkv_bias=True, norm_layer=partial(nn.LayerNorm, eps=1e-6), depths=[3, 4, 6, 3], sr_ratios=[8, 4, 2, 1],
             drop_rate=0.0, drop_path_rate=0.1)
 
 
@@ -626,7 +601,6 @@ class convprojection_base(nn.Module):
         self.convd2x = UpsampleConvLayer(64, 16, kernel_size=4, stride=2)
         self.dense_1 = nn.Sequential( ResidualBlock(16))
         self.convd1x = UpsampleConvLayer(16, 8, kernel_size=4, stride=2)
-        self.conv_output = ConvLayer(8, 3, kernel_size=3, stride=1, padding=1)   
 
     def forward(self,x1):
 
@@ -663,7 +637,6 @@ class convprojection_base(nn.Module):
         x = res2x
         x = self.dense_1(x)
         x = self.convd1x(x)
-
         return x
 
 ### This is the basic ChangeFormer module
@@ -815,6 +788,129 @@ class TDec(nn.Module):
 
         return cp
 
+
+class TDecV2(nn.Module):
+    """
+    Transformer Decoder
+    """
+    def __init__(self, input_transform='multiple_select', in_index=[0, 1, 2, 3], align_corners=True, 
+                    in_channels = [64, 128, 256, 512], embedding_dim= 256, output_nc=2, 
+                    decoder_softmax = False, feature_strides=[4, 8, 16, 32]):
+        super(TDecV2, self).__init__()
+        assert len(feature_strides) == len(in_channels)
+        assert min(feature_strides) == feature_strides[0]
+        self.feature_strides = feature_strides
+
+        #input transforms
+        self.input_transform = input_transform
+        self.in_index = in_index
+        self.align_corners = align_corners
+
+        #MLP
+        self.in_channels = in_channels
+        self.embedding_dim = embedding_dim
+
+        #Final prediction
+        self.output_nc = output_nc
+
+        c1_in_channels, c2_in_channels, c3_in_channels, c4_in_channels = self.in_channels
+
+        self.linear_c4 = MLP(input_dim=c4_in_channels, embed_dim=self.embedding_dim)
+        self.linear_c3 = MLP(input_dim=c3_in_channels, embed_dim=self.embedding_dim)
+        self.linear_c2 = MLP(input_dim=c2_in_channels, embed_dim=self.embedding_dim)
+        self.linear_c1 = MLP(input_dim=c1_in_channels, embed_dim=self.embedding_dim)
+
+        self.linear_fuse = nn.Conv2d(   in_channels=self.embedding_dim*4, out_channels=self.embedding_dim,
+                                        kernel_size=1)
+
+        #self.linear_pred = nn.Conv2d(embedding_dim, self.num_classes, kernel_size=1)
+        # self.convd2x    = UpsampleConvLayer(self.embedding_dim, self.embedding_dim, kernel_size=4, stride=2)
+        # self.dense_2x   = nn.Sequential( ResidualBlock(self.embedding_dim))
+        # self.convd1x    = UpsampleConvLayer(self.embedding_dim, self.embedding_dim, kernel_size=4, stride=2)
+        # self.dense_1x   = nn.Sequential( ResidualBlock(self.embedding_dim))
+
+        #Pixel Shiffle
+        self.pix_shuffle_conv   = nn.Conv2d(in_channels=self.embedding_dim, out_channels=16*output_nc, kernel_size=3, stride=1, padding=1)
+        self.relu = nn.ReLU()
+        self.pix_shuffle        = nn.PixelShuffle(4)
+
+        #Final prediction
+        # self.change_probability = ConvLayer(self.embedding_dim, self.output_nc, kernel_size=3, stride=1, padding=1)
+        
+        #Final activation
+        self.output_softmax     = decoder_softmax
+        self.active             = nn.Softmax(dim=1) 
+
+    def _transform_inputs(self, inputs):
+        """Transform inputs for decoder.
+        Args:
+            inputs (list[Tensor]): List of multi-level img features.
+        Returns:
+            Tensor: The transformed inputs
+        """
+
+        if self.input_transform == 'resize_concat':
+            inputs = [inputs[i] for i in self.in_index]
+            upsampled_inputs = [
+                resize(
+                    input=x,
+                    size=inputs[0].shape[2:],
+                    mode='bilinear',
+                    align_corners=self.align_corners) for x in inputs
+            ]
+            inputs = torch.cat(upsampled_inputs, dim=1)
+        elif self.input_transform == 'multiple_select':
+            inputs = [inputs[i] for i in self.in_index]
+        else:
+            inputs = inputs[self.in_index]
+
+        return inputs
+
+    def forward(self, inputs1, inputs2):
+        x_1 = self._transform_inputs(inputs1)  # len=4, 1/4,1/8,1/16,1/32
+        x_2 = self._transform_inputs(inputs2)  # len=4, 1/4,1/8,1/16,1/32
+
+        c1_1, c2_1, c3_1, c4_1 = x_1
+        c1_2, c2_2, c3_2, c4_2 = x_2
+
+        ############## MLP decoder on C1-C4 ###########
+        n, _, h, w = c4_1.shape
+
+        _c4_1 = self.linear_c4(c4_1).permute(0,2,1).reshape(n, -1, c4_1.shape[2], c4_1.shape[3])
+        _c4_1 = resize(_c4_1, size=c1_1.size()[2:],mode='bilinear',align_corners=False)
+        _c4_2 = self.linear_c4(c4_2).permute(0,2,1).reshape(n, -1, c4_2.shape[2], c4_2.shape[3])
+        _c4_2 = resize(_c4_2, size=c1_2.size()[2:],mode='bilinear',align_corners=False)
+
+        _c3_1 = self.linear_c3(c3_1).permute(0,2,1).reshape(n, -1, c3_1.shape[2], c3_1.shape[3])
+        _c3_1 = resize(_c3_1, size=c1_1.size()[2:],mode='bilinear',align_corners=False)
+        _c3_2 = self.linear_c3(c3_2).permute(0,2,1).reshape(n, -1, c3_2.shape[2], c3_2.shape[3])
+        _c3_2 = resize(_c3_2, size=c1_2.size()[2:],mode='bilinear',align_corners=False)
+
+        _c2_1 = self.linear_c2(c2_1).permute(0,2,1).reshape(n, -1, c2_1.shape[2], c2_1.shape[3])
+        _c2_1 = resize(_c2_1, size=c1_1.size()[2:],mode='bilinear',align_corners=False)
+        _c2_2 = self.linear_c2(c2_2).permute(0,2,1).reshape(n, -1, c2_2.shape[2], c2_2.shape[3])
+        _c2_2 = resize(_c2_2, size=c1_2.size()[2:],mode='bilinear',align_corners=False)
+
+        _c1_1 = self.linear_c1(c1_1).permute(0,2,1).reshape(n, -1, c1_1.shape[2], c1_1.shape[3])
+        _c1_2 = self.linear_c1(c1_2).permute(0,2,1).reshape(n, -1, c1_2.shape[2], c1_2.shape[3])
+
+        _c = self.linear_fuse(torch.cat([torch.abs(_c4_1-_c4_2), torch.abs(_c3_1-_c3_2), torch.abs(_c2_1-_c2_2), torch.abs(_c1_1-_c1_2)], dim=1))
+
+        # x = self.dense_2x(x)
+        # x = self.convd1x(x)
+        # x = self.dense_1x(x)
+
+        # cp = self.change_probability(x)
+
+        # cp = F.interpolate(_c, scale_factor=4, mode="nearest")
+        x  = self.relu(self.pix_shuffle_conv(_c))
+        cp = self.pix_shuffle(x)
+
+        if self.output_softmax:
+            cp = self.active(cp)
+
+        return cp
+
 # ChangeFormerV2:
 # Transformer encoder to extract features
 # Feature differencing and pass it through Transformer decoder
@@ -822,15 +918,16 @@ class ChangeFormerV2(nn.Module):
 
     def __init__(self, input_nc=3, output_nc=2, decoder_softmax=False):
         super(ChangeFormerV2, self).__init__()
-
-        self.Tenc   = Tenc( patch_size=4, embed_dims=[64, 128, 320, 512], num_heads=[1,2,4,8], 
-                            mlp_ratios=[2, 2, 2, 2], qkv_bias=True, norm_layer=partial(nn.LayerNorm, 
-                            eps=1e-6), depths=[3, 4, 6, 3], sr_ratios=[8,4,2,1], drop_rate=0.0, 
-                            drop_path_rate=0.1)
+        #Transformer Encoder
+        self.Tenc   = Tenc()
         
+        #Transformer Decoder
         self.TDec   = TDec( input_transform='multiple_select', in_index=[0, 1, 2, 3], align_corners=True, 
-                            in_channels = [64, 128, 320, 512], embedding_dim= 256, output_nc=output_nc, 
+                            in_channels = [64, 128, 320, 512], embedding_dim= 32, output_nc=output_nc, 
                             decoder_softmax = decoder_softmax, feature_strides=[4, 8, 16, 32])
+        #Final activation
+        self.decoder_softmax = decoder_softmax
+        self.output_activation = torch.nn.Softmax(dim=1)
 
     def forward(self, x1, x2):
 
@@ -843,23 +940,25 @@ class ChangeFormerV2(nn.Module):
 
         cp = self.TDec(DI)
 
+        if self.decoder_softmax:
+            cp = self.output_activation(cp)
+
         return cp
 
 # ChangeFormerV3:
-# Transformer encoder to extract features
-# Concatenate the features and pass it through Transformer decoder
+# Feature differencing and pass it through Transformer decoder
 class ChangeFormerV3(nn.Module):
 
     def __init__(self, input_nc=3, output_nc=2, decoder_softmax=False):
         super(ChangeFormerV3, self).__init__()
-
-        self.Tenc   = Tenc( patch_size=4, embed_dims=[64, 128, 320, 512], num_heads=[1,2,4,8], 
-                            mlp_ratios=[2, 2, 2, 2], qkv_bias=True, norm_layer=partial(nn.LayerNorm, 
-                            eps=1e-6), depths=[3, 4, 6, 3], sr_ratios=[8,4,2,1], drop_rate=0.0, 
-                            drop_path_rate=0.1)
+        #Transformer Encoder
+        self.Tenc   = Tenc( patch_size=16, embed_dims=[64, 128, 320, 512], num_heads=[1, 2, 4, 8], 
+                            mlp_ratios=[4, 4, 4, 4], qkv_bias=True, norm_layer=partial(nn.LayerNorm, eps=1e-6), 
+                            depths=[3, 4, 6, 3], sr_ratios=[8, 4, 2, 1], drop_rate=0.0, drop_path_rate=0.1)
         
-        self.TDec   = TDec( input_transform='multiple_select', in_index=[0, 1, 2, 3], align_corners=True, 
-                            in_channels = [128, 256, 640, 1024], embedding_dim= 256, output_nc=output_nc, 
+        #Transformer Decoder
+        self.TDec   = TDecV2( input_transform='multiple_select', in_index=[0, 1, 2, 3], align_corners=True, 
+                            in_channels = [64, 128, 320, 512], embedding_dim= 64, output_nc=output_nc, 
                             decoder_softmax = decoder_softmax, feature_strides=[4, 8, 16, 32])
 
     def forward(self, x1, x2):
@@ -867,13 +966,10 @@ class ChangeFormerV3(nn.Module):
         fx1 = self.Tenc(x1)
         fx2 = self.Tenc(x2)
 
-        FEATURES = []
-        for i in range(0,4):
-            FEATURES.append(torch.cat((fx1[i], fx2[i]), dim=1))
-
-        cp = self.TDec(FEATURES)
+        cp = self.TDec(fx1, fx2)
 
         return cp
+
 
 ## The following is original network found in paper which solves all-weather removal problems 
 ## using a single model
@@ -913,3 +1009,337 @@ class ChangeFormerV3(nn.Module):
 
 
 
+#Transformer at full-resolution
+class EncoderTransformer_x2(nn.Module):
+    def __init__(self, img_size=256, patch_size=16, in_chans=3, num_classes=2, embed_dims=[32, 64, 128, 256, 512],
+                 num_heads=[1, 2, 4, 8, 16], mlp_ratios=[4, 4, 4, 4, 4], qkv_bias=False, qk_scale=None, drop_rate=0.,
+                 attn_drop_rate=0., drop_path_rate=0., norm_layer=nn.LayerNorm,
+                 depths=[3, 3, 4, 6, 3], sr_ratios=[8, 4, 2, 1, 1]):
+        super().__init__()
+        self.num_classes = num_classes
+        self.depths = depths
+        self.embed_dims = embed_dims
+
+        # patch embedding definitions
+        self.patch_embed1 = OverlapPatchEmbed(img_size=img_size, patch_size=3, stride=2, in_chans=in_chans,
+                                              embed_dim=embed_dims[0])
+        self.patch_embed2 = OverlapPatchEmbed(img_size=img_size // 2, patch_size=3, stride=2, in_chans=embed_dims[0],
+                                              embed_dim=embed_dims[1])
+        self.patch_embed3 = OverlapPatchEmbed(img_size=img_size // 4, patch_size=3, stride=2, in_chans=embed_dims[1],
+                                              embed_dim=embed_dims[2])
+        self.patch_embed4 = OverlapPatchEmbed(img_size=img_size // 8, patch_size=3, stride=2, in_chans=embed_dims[2],
+                                              embed_dim=embed_dims[3])
+        self.patch_embed5 = OverlapPatchEmbed(img_size=img_size // 16, patch_size=3, stride=2, in_chans=embed_dims[3],
+                                              embed_dim=embed_dims[4])
+
+        # main  encoder
+        dpr = [x.item() for x in torch.linspace(0, drop_path_rate, sum(depths))]  # stochastic depth decay rule
+        cur = 0
+        self.block1 = nn.ModuleList([Block(
+            dim=embed_dims[0], num_heads=num_heads[0], mlp_ratio=mlp_ratios[0], qkv_bias=qkv_bias, qk_scale=qk_scale,
+            drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer,
+            sr_ratio=sr_ratios[0])
+            for i in range(depths[0])])
+        self.norm1 = norm_layer(embed_dims[0])
+        # intra-patch encoder
+        self.patch_block1 = nn.ModuleList([Block(
+            dim=embed_dims[1], num_heads=num_heads[0], mlp_ratio=mlp_ratios[0], qkv_bias=qkv_bias, qk_scale=qk_scale,
+            drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer,
+            sr_ratio=sr_ratios[0])
+            for i in range(1)])
+        self.pnorm1 = norm_layer(embed_dims[1])
+        # main  encoder
+        cur += depths[0]
+        self.block2 = nn.ModuleList([Block(
+            dim=embed_dims[1], num_heads=num_heads[1], mlp_ratio=mlp_ratios[1], qkv_bias=qkv_bias, qk_scale=qk_scale,
+            drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer,
+            sr_ratio=sr_ratios[1])
+            for i in range(depths[1])])
+        self.norm2 = norm_layer(embed_dims[1])
+        # intra-patch encoder
+        self.patch_block2 = nn.ModuleList([Block(
+            dim=embed_dims[2], num_heads=num_heads[1], mlp_ratio=mlp_ratios[1], qkv_bias=qkv_bias, qk_scale=qk_scale,
+            drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer,
+            sr_ratio=sr_ratios[1])
+            for i in range(1)])
+        self.pnorm2 = norm_layer(embed_dims[2])
+        # main  encoder
+        cur += depths[1]
+        self.block3 = nn.ModuleList([Block(
+            dim=embed_dims[2], num_heads=num_heads[2], mlp_ratio=mlp_ratios[2], qkv_bias=qkv_bias, qk_scale=qk_scale,
+            drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer,
+            sr_ratio=sr_ratios[2])
+            for i in range(depths[2])])
+        self.norm3 = norm_layer(embed_dims[2])
+        # intra-patch encoder
+        self.patch_block3 = nn.ModuleList([Block(
+            dim=embed_dims[3], num_heads=num_heads[1], mlp_ratio=mlp_ratios[2], qkv_bias=qkv_bias, qk_scale=qk_scale,
+            drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer,
+            sr_ratio=sr_ratios[2])
+            for i in range(1)])
+        self.pnorm3 = norm_layer(embed_dims[3])
+        # main  encoder
+        cur += depths[2]
+        self.block4 = nn.ModuleList([Block(
+            dim=embed_dims[3], num_heads=num_heads[3], mlp_ratio=mlp_ratios[3], qkv_bias=qkv_bias, qk_scale=qk_scale,
+            drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer,
+            sr_ratio=sr_ratios[3])
+            for i in range(depths[3])])
+        self.norm4 = norm_layer(embed_dims[3])
+        # intra-patch encoder
+        self.patch_block4 = nn.ModuleList([Block(
+            dim=embed_dims[4], num_heads=num_heads[1], mlp_ratio=mlp_ratios[3], qkv_bias=qkv_bias, qk_scale=qk_scale,
+            drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer,
+            sr_ratio=sr_ratios[3])
+            for i in range(1)])
+        self.pnorm4 = norm_layer(embed_dims[4])
+        # main  encoder
+        cur += depths[3]
+        self.block5 = nn.ModuleList([Block(
+            dim=embed_dims[4], num_heads=num_heads[4], mlp_ratio=mlp_ratios[4], qkv_bias=qkv_bias, qk_scale=qk_scale,
+            drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer,
+            sr_ratio=sr_ratios[4])
+            for i in range(depths[4])])
+        self.norm5 = norm_layer(embed_dims[4])
+
+        self.apply(self._init_weights)
+
+    def _init_weights(self, m):
+        if isinstance(m, nn.Linear):
+            trunc_normal_(m.weight, std=.02)
+            if isinstance(m, nn.Linear) and m.bias is not None:
+                nn.init.constant_(m.bias, 0)
+        elif isinstance(m, nn.LayerNorm):
+            nn.init.constant_(m.bias, 0)
+            nn.init.constant_(m.weight, 1.0)
+        elif isinstance(m, nn.Conv2d):
+            fan_out = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
+            fan_out //= m.groups
+            m.weight.data.normal_(0, math.sqrt(2.0 / fan_out))
+            if m.bias is not None:
+                m.bias.data.zero_()
+
+    def reset_drop_path(self, drop_path_rate):
+        dpr = [x.item() for x in torch.linspace(0, drop_path_rate, sum(self.depths))]
+        cur = 0
+        for i in range(self.depths[0]):
+            self.block1[i].drop_path.drop_prob = dpr[cur + i]
+
+        cur += self.depths[0]
+        for i in range(self.depths[1]):
+            self.block2[i].drop_path.drop_prob = dpr[cur + i]
+
+        cur += self.depths[1]
+        for i in range(self.depths[2]):
+            self.block3[i].drop_path.drop_prob = dpr[cur + i]
+
+        cur += self.depths[2]
+        for i in range(self.depths[3]):
+            self.block4[i].drop_path.drop_prob = dpr[cur + i]
+
+    def forward_features(self, x):
+        B = x.shape[0]
+        outs = []
+    
+        # stage 1
+        x1, H1, W1 = self.patch_embed1(x)
+
+        for i, blk in enumerate(self.block1):
+            x1 = blk(x1, H1, W1)
+        x1 = self.norm1(x1)
+        x1 = x1.reshape(B, H1, W1, -1).permute(0, 3, 1, 2).contiguous()
+        outs.append(x1)
+
+        # stage 2
+        x1, H1, W1 = self.patch_embed2(x1)
+        x1 = x1.permute(0,2,1).reshape(B,self.embed_dims[1],H1,W1)
+
+        x1 = x1.view(x1.shape[0],x1.shape[1],-1).permute(0,2,1)
+
+        for i, blk in enumerate(self.block2):
+            x1 = blk(x1, H1, W1)
+        x1 = self.norm2(x1)
+        x1 = x1.reshape(B, H1, W1, -1).permute(0, 3, 1, 2).contiguous()
+        outs.append(x1)
+
+        # stage 3
+        x1, H1, W1 = self.patch_embed3(x1)
+        x1 = x1.permute(0,2,1).reshape(B,self.embed_dims[2],H1,W1)
+
+        x1 = x1.view(x1.shape[0],x1.shape[1],-1).permute(0,2,1)
+
+        for i, blk in enumerate(self.block3):
+            x1 = blk(x1, H1, W1)
+        x1 = self.norm3(x1)
+        x1 = x1.reshape(B, H1, W1, -1).permute(0, 3, 1, 2).contiguous()
+        outs.append(x1)
+
+        # stage 4
+        x1, H1, W1 = self.patch_embed4(x1)
+        x1 = x1.permute(0,2,1).reshape(B,self.embed_dims[3],H1,W1)
+
+        x1 = x1.view(x1.shape[0],x1.shape[1],-1).permute(0,2,1)
+
+        for i, blk in enumerate(self.block4):
+            x1 = blk(x1, H1, W1)
+        x1 = self.norm4(x1)
+        x1 = x1.reshape(B, H1, W1, -1).permute(0, 3, 1, 2).contiguous()
+        outs.append(x1)
+
+        # stage 5
+        x1, H1, W1 = self.patch_embed5(x1)
+        x1 = x1.permute(0,2,1).reshape(B,self.embed_dims[4],H1,W1)
+
+        x1 = x1.view(x1.shape[0],x1.shape[1],-1).permute(0,2,1)
+
+        for i, blk in enumerate(self.block5):
+            x1 = blk(x1, H1, W1)
+        x1 = self.norm5(x1)
+        x1 = x1.reshape(B, H1, W1, -1).permute(0, 3, 1, 2).contiguous()
+        outs.append(x1)
+
+        return outs
+
+    def forward(self, x):
+        x = self.forward_features(x)
+
+        return x
+
+class DecoderTransformer_x2(nn.Module):
+    """
+    Transformer Decoder
+    """
+    def __init__(self, input_transform='multiple_select', in_index=[0, 1, 2, 3, 4], align_corners=True, 
+                    in_channels = [32, 64, 128, 256, 512], embedding_dim= 64, output_nc=2, 
+                    decoder_softmax = False, feature_strides=[2, 4, 8, 16, 32]):
+        super(DecoderTransformer_x2, self).__init__()
+        assert len(feature_strides) == len(in_channels)
+        assert min(feature_strides) == feature_strides[0]
+        self.feature_strides = feature_strides
+
+        #input transforms
+        self.input_transform = input_transform
+        self.in_index = in_index
+        self.align_corners = align_corners
+
+        #MLP
+        self.in_channels = in_channels
+        self.embedding_dim = embedding_dim
+
+        #Final prediction
+        self.output_nc = output_nc
+
+        c1_in_channels, c2_in_channels, c3_in_channels, c4_in_channels, c5_in_channels = self.in_channels
+
+        self.linear_c5 = MLP(input_dim=c5_in_channels, embed_dim=self.embedding_dim)
+        self.linear_c4 = MLP(input_dim=c4_in_channels, embed_dim=self.embedding_dim)
+        self.linear_c3 = MLP(input_dim=c3_in_channels, embed_dim=self.embedding_dim)
+        self.linear_c2 = MLP(input_dim=c2_in_channels, embed_dim=self.embedding_dim)
+        self.linear_c1 = MLP(input_dim=c1_in_channels, embed_dim=self.embedding_dim)
+
+        self.linear_fuse = nn.Conv2d(   in_channels=self.embedding_dim*len(in_channels), out_channels=self.embedding_dim,
+                                        kernel_size=1)
+
+        #self.linear_pred = nn.Conv2d(embedding_dim, self.num_classes, kernel_size=1)
+        self.convd2x    = UpsampleConvLayer(self.embedding_dim, self.embedding_dim, kernel_size=4, stride=2)
+        self.dense_2x   = nn.Sequential( ResidualBlock(self.embedding_dim))
+        self.convd1x    = UpsampleConvLayer(self.embedding_dim, self.embedding_dim, kernel_size=4, stride=2)
+        self.dense_1x   = nn.Sequential( ResidualBlock(self.embedding_dim))
+
+        #Final prediction
+        self.change_probability = ConvLayer(self.embedding_dim, self.output_nc, kernel_size=3, stride=1, padding=1)
+        
+        #Final activation
+        self.output_softmax     = decoder_softmax
+        self.active             = nn.Softmax(dim=1) 
+
+    def _transform_inputs(self, inputs):
+        """Transform inputs for decoder.
+        Args:
+            inputs (list[Tensor]): List of multi-level img features.
+        Returns:
+            Tensor: The transformed inputs
+        """
+
+        if self.input_transform == 'resize_concat':
+            inputs = [inputs[i] for i in self.in_index]
+            upsampled_inputs = [
+                resize(
+                    input=x,
+                    size=inputs[0].shape[2:],
+                    mode='bilinear',
+                    align_corners=self.align_corners) for x in inputs
+            ]
+            inputs = torch.cat(upsampled_inputs, dim=1)
+        elif self.input_transform == 'multiple_select':
+            inputs = [inputs[i] for i in self.in_index]
+        else:
+            inputs = inputs[self.in_index]
+
+        return inputs
+
+    def forward(self, inputs1, inputs2):
+        x_1 = self._transform_inputs(inputs1)  # len=4, 1/4,1/8,1/16,1/32
+        x_2 = self._transform_inputs(inputs2)  # len=4, 1/4,1/8,1/16,1/32
+
+        c1_1, c2_1, c3_1, c4_1, c5_1 = x_1
+        c1_2, c2_2, c3_2, c4_2, c5_2 = x_2
+
+        ############## MLP decoder on C1-C4 ###########
+        n, _, h, w = c5_1.shape
+
+        _c5_1 = self.linear_c5(c5_1).permute(0,2,1).reshape(n, -1, c5_1.shape[2], c5_1.shape[3])
+        _c5_1 = resize(_c5_1, size=c1_1.size()[2:],mode='bilinear',align_corners=False)
+        _c5_2 = self.linear_c5(c5_2).permute(0,2,1).reshape(n, -1, c5_2.shape[2], c5_2.shape[3])
+        _c5_2 = resize(_c5_2, size=c1_2.size()[2:],mode='bilinear',align_corners=False)
+
+        _c4_1 = self.linear_c4(c4_1).permute(0,2,1).reshape(n, -1, c4_1.shape[2], c4_1.shape[3])
+        _c4_1 = resize(_c4_1, size=c1_1.size()[2:],mode='bilinear',align_corners=False)
+        _c4_2 = self.linear_c4(c4_2).permute(0,2,1).reshape(n, -1, c4_2.shape[2], c4_2.shape[3])
+        _c4_2 = resize(_c4_2, size=c1_2.size()[2:],mode='bilinear',align_corners=False)
+
+        _c3_1 = self.linear_c3(c3_1).permute(0,2,1).reshape(n, -1, c3_1.shape[2], c3_1.shape[3])
+        _c3_1 = resize(_c3_1, size=c1_1.size()[2:],mode='bilinear',align_corners=False)
+        _c3_2 = self.linear_c3(c3_2).permute(0,2,1).reshape(n, -1, c3_2.shape[2], c3_2.shape[3])
+        _c3_2 = resize(_c3_2, size=c1_2.size()[2:],mode='bilinear',align_corners=False)
+
+        _c2_1 = self.linear_c2(c2_1).permute(0,2,1).reshape(n, -1, c2_1.shape[2], c2_1.shape[3])
+        _c2_1 = resize(_c2_1, size=c1_1.size()[2:],mode='bilinear',align_corners=False)
+        _c2_2 = self.linear_c2(c2_2).permute(0,2,1).reshape(n, -1, c2_2.shape[2], c2_2.shape[3])
+        _c2_2 = resize(_c2_2, size=c1_2.size()[2:],mode='bilinear',align_corners=False)
+
+        _c1_1 = self.linear_c1(c1_1).permute(0,2,1).reshape(n, -1, c1_1.shape[2], c1_1.shape[3])
+        _c1_2 = self.linear_c1(c1_2).permute(0,2,1).reshape(n, -1, c1_2.shape[2], c1_2.shape[3])
+
+        _c = self.linear_fuse(torch.cat([torch.abs(_c5_1-_c5_2), torch.abs(_c4_1-_c4_2), torch.abs(_c3_1-_c3_2), torch.abs(_c2_1-_c2_2), torch.abs(_c1_1-_c1_2)], dim=1))
+
+        x = self.convd2x(_c)
+        x = self.dense_2x(x)
+
+        cp = self.change_probability(x)
+
+        if self.output_softmax:
+            cp = self.active(cp)
+
+        return cp
+
+
+# ChangeFormerV4:
+class ChangeFormerV4(nn.Module):
+
+    def __init__(self, input_nc=3, output_nc=2, decoder_softmax=False):
+        super(ChangeFormerV4, self).__init__()
+        #Transformer Encoder
+        self.Tenc_x2   = EncoderTransformer_x2()
+        
+        #Transformer Decoder
+        self.TDec_x2   = DecoderTransformer_x2()
+
+    def forward(self, x1, x2):
+
+        fx1 = self.Tenc_x2(x1)
+        fx2 = self.Tenc_x2(x2)
+
+        cp = self.TDec_x2(fx1, fx2)
+
+        return cp

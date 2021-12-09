@@ -71,6 +71,7 @@ class ImageDataset(data.Dataset):
                 with_random_vflip=True,
                 with_scale_random_crop=True,
                 with_random_blur=True,
+                random_color_tf=True
             )
         else:
             self.augm = CDDataAugmentation(

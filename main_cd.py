@@ -31,7 +31,7 @@ if __name__ == '__main__':
     # ------------
     parser = ArgumentParser()
     parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
-    parser.add_argument('--project_name', default='test', type=str)
+    parser.add_argument('--project_name', default='ChangeFormer', type=str)
     parser.add_argument('--checkpoint_root', default='checkpoints', type=str)
     parser.add_argument('--vis_root', default='vis', type=str)
 
@@ -48,6 +48,8 @@ if __name__ == '__main__':
 
     # model
     parser.add_argument('--n_class', default=2, type=int)
+    parser.add_argument('--pretrain', default=None, type=str)
+
     parser.add_argument('--net_G', default='base_transformer_pos_s4_dd8', type=str,
                         help='base_resnet18 | base_transformer_pos_s4 | '
                              'base_transformer_pos_s4_dd8 | '
