@@ -151,7 +151,7 @@ class CDEvaluator():
         self.batch = batch
         img_in1 = batch['A'].to(self.device)
         img_in2 = batch['B'].to(self.device)
-        self.G_pred = self.net_G(img_in1, img_in2)
+        self.G_pred = self.net_G(img_in1, img_in2)[-1]
 
     def eval_models(self,checkpoint_name='best_ckpt.pt'):
 

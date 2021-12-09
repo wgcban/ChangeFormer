@@ -84,6 +84,8 @@ class CDTrainer():
         self.vis_dir = args.vis_dir
 
         # define the loss functions
+        self.multi_pred = args.multi_pred
+        self.weights = tuple(args.multi_pred_weights)
         if args.loss == 'ce':
             self._pxl_loss = cross_entropy
         elif args.loss == 'bce':
@@ -152,7 +154,7 @@ class CDTrainer():
         return imps, est
 
     def _visualize_pred(self):
-        pred = torch.argmax(self.G_pred, dim=1, keepdim=True)
+        pred = torch.argmax(self.G_pred[-1], dim=1, keepdim=True)
         pred_vis = pred * 255
         return pred_vis
 
@@ -174,7 +176,7 @@ class CDTrainer():
         update metric
         """
         target = self.batch['L'].to(self.device).detach()
-        G_pred = self.G_pred.detach()
+        G_pred = self.G_pred[-1].detach()
 
         G_pred = torch.argmax(G_pred, dim=1)
 
@@ -262,7 +264,16 @@ class CDTrainer():
 
     def _backward_G(self):
         gt = self.batch['L'].to(self.device).long()
-        self.G_loss = self._pxl_loss(self.G_pred, gt)
+        if self.multi_pred:
+            i=0
+            temp_loss = 0.0
+            for pred in self.G_pred:
+                temp_loss = temp_loss + self.weights[i]*self._pxl_loss(pred, gt)
+                i+=1
+            self.G_loss = temp_loss
+        else:
+            self.G_loss = self._pxl_loss(self.G_pred[-1], gt)
+
         self.G_loss.backward()
 
 
