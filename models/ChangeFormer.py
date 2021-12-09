@@ -1009,9 +1009,9 @@ class ChangeFormerV3(nn.Module):
 
 
 
-#Transformer at full-resolution
+#Transormer Ecoder with x2, x4, x8, x16 scales
 class EncoderTransformer_x2(nn.Module):
-    def __init__(self, img_size=256, patch_size=16, in_chans=3, num_classes=2, embed_dims=[32, 64, 128, 256, 512],
+    def __init__(self, img_size=256, patch_size=3, in_chans=3, num_classes=2, embed_dims=[32, 64, 128, 256, 512],
                  num_heads=[1, 2, 4, 8, 16], mlp_ratios=[4, 4, 4, 4, 4], qkv_bias=False, qk_scale=None, drop_rate=0.,
                  attn_drop_rate=0., drop_path_rate=0., norm_layer=nn.LayerNorm,
                  depths=[3, 3, 4, 6, 3], sr_ratios=[8, 4, 2, 1, 1]):
