@@ -150,7 +150,7 @@ def to_one_hot_var(tensor, nClasses, requires_grad=False):
 
     n, h, w = torch.squeeze(tensor, dim=1).size()
     one_hot = tensor.new(n, nClasses, h, w).fill_(0)
-    one_hot = one_hot.scatter_(1, tensor.view(n, 1, h, w), 1)
+    one_hot = one_hot.scatter_(1, tensor.type(torch.int64).view(n, 1, h, w), 1)
     return Variable(one_hot, requires_grad=requires_grad)
 
 class mIoULoss(nn.Module):
