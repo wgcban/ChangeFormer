@@ -50,7 +50,7 @@ if __name__ == '__main__':
     parser.add_argument('--n_class', default=2, type=int)
     parser.add_argument('--pretrain', default=None, type=str)
     parser.add_argument('--multi_pred', default=False)
-    parser.add_argument('--multi_pred_weights', nargs = '+', type = float, default = [0.3, 0.3, 0.3, 0.5, 1.0])
+    parser.add_argument('--multi_pred_weights', nargs = '+', type = float, default = [0.5, 0.9, 0.9, 0.9, 1.0, 1.0])
 
     parser.add_argument('--net_G', default='base_transformer_pos_s4_dd8', type=str,
                         help='base_resnet18 | base_transformer_pos_s4 | '

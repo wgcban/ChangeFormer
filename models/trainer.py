@@ -263,12 +263,15 @@ class CDTrainer():
 
 
     def _backward_G(self):
-        gt = self.batch['L'].to(self.device).long()
+        gt = self.batch['L'].to(self.device).float()
         if self.multi_pred:
-            i=0
+            i         = 0
             temp_loss = 0.0
             for pred in self.G_pred:
-                temp_loss = temp_loss + self.weights[i]*self._pxl_loss(pred, gt)
+                if pred.size(2) != gt.size(2):
+                    temp_loss = temp_loss + self.weights[i]*self._pxl_loss(pred, F.interpolate(gt, size=pred.size(2), mode="nearest"))
+                else:
+                    temp_loss = temp_loss + self.weights[i]*self._pxl_loss(pred, gt)
                 i+=1
             self.G_loss = temp_loss
         else:
