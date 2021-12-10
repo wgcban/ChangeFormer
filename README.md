@@ -1,4 +1,4 @@
-# Remote Sensing Image Change Detection with Transformers
+# **ChangeFormer**: An Efficient Transformer Architecture for Change Detection in Remote Sensing Images
 
 Chaminda
 Here, we provide the pytorch implementation of the paper: Remote Sensing Image Change Detection with Transformers.
