@@ -1,6 +1,7 @@
-# **ChangeFormer**: An Efficient Transformer Architecture for Change Detection in Remote Sensing Images
+# ChangeFormer: An Efficient Transformer Architecture for Change Detection in Remote Sensing Images
 
-Chaminda
+[Wele Gedara Chaminda Bandara](), [Vishal M. Patel]()
+
 Here, we provide the pytorch implementation of the paper: Remote Sensing Image Change Detection with Transformers.
 
 For more ore information, please see our published paper at [IEEE TGRS](https://ieeexplore.ieee.org/document/9491802) or [arxiv](https://arxiv.org/abs/2103.00208). 
