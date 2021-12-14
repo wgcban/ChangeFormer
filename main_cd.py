@@ -45,11 +45,13 @@ if __name__ == '__main__':
     parser.add_argument('--split_val', default="val", type=str)
 
     parser.add_argument('--img_size', default=256, type=int)
+    parser.add_argument('--shuffle_AB', default=False, type=str)
 
     # model
     parser.add_argument('--n_class', default=2, type=int)
     parser.add_argument('--pretrain', default=None, type=str)
-    parser.add_argument('--multi_pred', default=False)
+    parser.add_argument('--multi_scale_train', default=False, type=str)
+    parser.add_argument('--multi_scale_infer', default=False, type=str)
     parser.add_argument('--multi_pred_weights', nargs = '+', type = float, default = [0.5, 0.9, 0.9, 0.9, 1.0, 1.0])
 
     parser.add_argument('--net_G', default='base_transformer_pos_s4_dd8', type=str,

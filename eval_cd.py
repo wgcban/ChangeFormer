@@ -25,7 +25,7 @@ def main():
     parser.add_argument('--dataset', default='CDDataset', type=str)
     parser.add_argument('--data_name', default='LEVIR', type=str)
 
-    parser.add_argument('--batch_size', default=8, type=int)
+    parser.add_argument('--batch_size', default=1, type=int)
     parser.add_argument('--split', default="test", type=str)
 
     parser.add_argument('--img_size', default=256, type=int)

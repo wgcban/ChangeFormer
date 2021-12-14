@@ -973,12 +973,12 @@ class ChangeFormerV3(nn.Module):
 #Transormer Ecoder with x2, x4, x8, x16 scales
 class EncoderTransformer_x2(nn.Module):
     def __init__(self, img_size=256, patch_size=3, in_chans=3, num_classes=2, embed_dims=[32, 64, 128, 256, 512],
-                 num_heads=[1, 2, 4, 8, 16], mlp_ratios=[4, 4, 4, 4, 4], qkv_bias=False, qk_scale=None, drop_rate=0.,
+                 num_heads=[2, 2, 4, 8, 16], mlp_ratios=[4, 4, 4, 4, 4], qkv_bias=False, qk_scale=None, drop_rate=0.,
                  attn_drop_rate=0., drop_path_rate=0., norm_layer=nn.LayerNorm,
-                 depths=[3, 3, 4, 6, 3], sr_ratios=[8, 4, 2, 1, 1]):
+                 depths=[3, 3, 6, 18, 3], sr_ratios=[8, 4, 2, 1, 1]):
         super().__init__()
         self.num_classes    = num_classes
-        self.depths         = depths
+        self.depths         = depths #[3, 3, 4, 6, 3]
         self.embed_dims     = embed_dims
 
         # patch embedding definitions
@@ -1163,7 +1163,6 @@ class EncoderTransformer_x2(nn.Module):
 
     def forward(self, x):
         x = self.forward_features(x)
-
         return x
 
 
@@ -1278,36 +1277,36 @@ class DecoderTransformer_x2(nn.Module):
 
         ############## MLP decoder on C1-C4 ###########
         n, _, h, w = c5_1.shape
-        n, _, H, W = c1_1.shape
 
-        outputs = []
+        outputs = [] #Multi-scale outputs adding here
+        
         _c5_1 = self.linear_c5(c5_1).permute(0,2,1).reshape(n, -1, c5_1.shape[2], c5_1.shape[3])
         _c5_2 = self.linear_c5(c5_2).permute(0,2,1).reshape(n, -1, c5_2.shape[2], c5_2.shape[3])
         _c5   = self.diff_c5(torch.cat((_c5_1, _c5_2), dim=1)) #Difference of features at x1/32 scale
         p_c5  = self.make_pred_c5(_c5) #Predicted change map at x1/32 scale
         outputs.append(p_c5) #x1/32 scale
-        _c5_up= resize(_c5, size=c1_2.size()[2:],mode='bilinear',align_corners=False)
+        _c5_up= resize(_c5, size=c1_2.size()[2:], mode='bilinear', align_corners=False)
 
         _c4_1 = self.linear_c4(c4_1).permute(0,2,1).reshape(n, -1, c4_1.shape[2], c4_1.shape[3])
         _c4_2 = self.linear_c4(c4_2).permute(0,2,1).reshape(n, -1, c4_2.shape[2], c4_2.shape[3])
         _c4   = self.diff_c4(torch.cat((F.interpolate(_c5, scale_factor=2, mode="bilinear"), _c4_1, _c4_2), dim=1)) #Difference of features at x1/16 scale
         p_c4  = self.make_pred_c4(_c4) #Predicted change map at x1/16 scale
         outputs.append(p_c4) #x1/16 scale
-        _c4_up= resize(_c4, size=c1_2.size()[2:],mode='bilinear',align_corners=False)
+        _c4_up= resize(_c4, size=c1_2.size()[2:], mode='bilinear', align_corners=False)
 
         _c3_1 = self.linear_c3(c3_1).permute(0,2,1).reshape(n, -1, c3_1.shape[2], c3_1.shape[3])
         _c3_2 = self.linear_c3(c3_2).permute(0,2,1).reshape(n, -1, c3_2.shape[2], c3_2.shape[3])
         _c3   = self.diff_c3(torch.cat((F.interpolate(_c4, scale_factor=2, mode="bilinear"), _c3_1, _c3_2), dim=1)) #Difference of features at x1/8 scale
         p_c3  = self.make_pred_c3(_c3) #Predicted change map at x1/8 scale
         outputs.append(p_c3) #x1/8 scale
-        _c3_up= resize(_c3, size=c1_2.size()[2:],mode='bilinear',align_corners=False)
+        _c3_up= resize(_c3, size=c1_2.size()[2:], mode='bilinear', align_corners=False)
 
         _c2_1 = self.linear_c2(c2_1).permute(0,2,1).reshape(n, -1, c2_1.shape[2], c2_1.shape[3])
         _c2_2 = self.linear_c2(c2_2).permute(0,2,1).reshape(n, -1, c2_2.shape[2], c2_2.shape[3])
         _c2   = self.diff_c2(torch.cat((F.interpolate(_c3, scale_factor=2, mode="bilinear"), _c2_1, _c2_2), dim=1)) #Difference of features at x1/4 scale
         p_c2  = self.make_pred_c2(_c2) #Predicted change map at x1/4 scale
         outputs.append(p_c2) #x1/4 scale
-        _c2_up= resize(_c2, size=c1_2.size()[2:],mode='bilinear',align_corners=False)
+        _c2_up= resize(_c2, size=c1_2.size()[2:], mode='bilinear', align_corners=False)
 
         _c1_1 = self.linear_c1(c1_1).permute(0,2,1).reshape(n, -1, c1_1.shape[2], c1_1.shape[3])
         _c1_2 = self.linear_c1(c1_2).permute(0,2,1).reshape(n, -1, c1_2.shape[2], c1_2.shape[3])
@@ -1319,7 +1318,6 @@ class DecoderTransformer_x2(nn.Module):
 
         x = self.convd2x(_c)
         x = self.dense_2x(x)
-
         cp = self.change_probability(x)
 
         if self.output_softmax:
@@ -1338,15 +1336,56 @@ class ChangeFormerV4(nn.Module):
     def __init__(self, input_nc=3, output_nc=2, decoder_softmax=False):
         super(ChangeFormerV4, self).__init__()
         #Transformer Encoder
-        self.Tenc_x2   = EncoderTransformer_x2()
+        self.embed_dims = [32, 64, 128, 320, 512]
+
+        self.Tenc_x2   = EncoderTransformer_x2(img_size=256, patch_size=3, in_chans=input_nc, num_classes=output_nc, embed_dims=self.embed_dims,
+                 num_heads=[2, 2, 4, 8, 16], mlp_ratios=[2, 2, 2, 2, 2], qkv_bias=False, qk_scale=None, drop_rate=0.,
+                 attn_drop_rate=0., drop_path_rate=0., norm_layer=nn.LayerNorm,
+                 depths=[3, 3, 4, 6, 3], sr_ratios=[8, 4, 2, 1, 1])
+
+                #depths = [3, 3, 4, 6, 3], [3, 3, 6, 18, 3]
         
         #Transformer Decoder
-        self.TDec_x2   = DecoderTransformer_x2()
+        self.TDec_x2   = DecoderTransformer_x2(input_transform='multiple_select', in_index=[0, 1, 2, 3, 4], align_corners=True, 
+                    in_channels = self.embed_dims, embedding_dim= 64, output_nc=output_nc, 
+                    decoder_softmax = decoder_softmax, feature_strides=[2, 4, 8, 16, 32])
 
     def forward(self, x1, x2):
 
         fx1 = self.Tenc_x2(x1)
         fx2 = self.Tenc_x2(x2)
+
+        cp = self.TDec_x2(fx1, fx2)
+
+        return cp
+
+# ChangeFormerV5:
+class ChangeFormerV5(nn.Module):
+
+    def __init__(self, input_nc=3, output_nc=2, decoder_softmax=False):
+        super(ChangeFormerV5, self).__init__()
+        #Transformer Encoder
+        self.embed_dims = [32, 64, 128, 320, 512]
+
+        self.Tenc_x2_T1   = EncoderTransformer_x2(img_size=256, patch_size=3, in_chans=input_nc, num_classes=output_nc, embed_dims=self.embed_dims,
+                 num_heads=[2, 2, 4, 8, 16], mlp_ratios=[2, 2, 2, 2, 2], qkv_bias=False, qk_scale=None, drop_rate=0.,
+                 attn_drop_rate=0., drop_path_rate=0., norm_layer=nn.LayerNorm,
+                 depths=[3, 3, 4, 6, 3], sr_ratios=[8, 4, 2, 1, 1])
+        self.Tenc_x2_T2   = EncoderTransformer_x2(img_size=256, patch_size=3, in_chans=input_nc, num_classes=output_nc, embed_dims=self.embed_dims,
+                 num_heads=[2, 2, 4, 8, 16], mlp_ratios=[2, 2, 2, 2, 2], qkv_bias=False, qk_scale=None, drop_rate=0.,
+                 attn_drop_rate=0., drop_path_rate=0., norm_layer=nn.LayerNorm,
+                 depths=[3, 3, 4, 6, 3], sr_ratios=[8, 4, 2, 1, 1])
+
+                #depths = [3, 3, 4, 6, 3], [3, 3, 6, 18, 3]
+        
+        #Transformer Decoder
+        self.TDec_x2   = DecoderTransformer_x2(input_transform='multiple_select', in_index=[0, 1, 2, 3, 4], align_corners=True, 
+                    in_channels = self.embed_dims, embedding_dim= 64, output_nc=output_nc, 
+                    decoder_softmax = decoder_softmax, feature_strides=[2, 4, 8, 16, 32])
+
+    def forward(self, x1, x2):
+
+        [fx1,fx2]  = [self.Tenc_x2_T1(x1), self.Tenc_x2_T2(x2)]
 
         cp = self.TDec_x2(fx1, fx2)
 

@@ -7,7 +7,7 @@ from models.networks import *
 
 import torch
 import torch.optim as optim
-
+import numpy as np
 from misc.metric_tool import ConfuseMatrixMeter
 from models.losses import cross_entropy
 import models.losses as losses
@@ -21,15 +21,13 @@ from utils import de_norm
 class CDTrainer():
 
     def __init__(self, args, dataloaders):
-
+        self.args = args
         self.dataloaders = dataloaders
 
         self.n_class = args.n_class
         # define G
         self.net_G = define_G(args=args, gpu_ids=args.gpu_ids)
 
-        if args.pretrain is not None:
-            self.net_G.load_state_dict(torch.load(args.pretrain), strict=False)
 
         self.device = torch.device("cuda:%s" % args.gpu_ids[0] if torch.cuda.is_available() and len(args.gpu_ids)>0
                                    else "cpu")
@@ -83,8 +81,11 @@ class CDTrainer():
         self.checkpoint_dir = args.checkpoint_dir
         self.vis_dir = args.vis_dir
 
+        self.shuffle_AB = args.shuffle_AB
+
         # define the loss functions
-        self.multi_pred = args.multi_pred
+        self.multi_scale_train = args.multi_scale_train
+        self.multi_scale_infer = args.multi_scale_infer
         self.weights = tuple(args.multi_pred_weights)
         if args.loss == 'ce':
             self._pxl_loss = cross_entropy
@@ -116,7 +117,7 @@ class CDTrainer():
 
 
     def _load_checkpoint(self, ckpt_name='last_ckpt.pt'):
-
+        print("\n")
         if os.path.exists(os.path.join(self.checkpoint_dir, ckpt_name)):
             self.logger.write('loading last checkpoint...\n')
             # load the entire checkpoint
@@ -141,9 +142,14 @@ class CDTrainer():
             self.logger.write('Epoch_to_start = %d, Historical_best_acc = %.4f (at epoch %d)\n' %
                   (self.epoch_to_start, self.best_val_acc, self.best_epoch_id))
             self.logger.write('\n')
-
+        elif self.args.pretrain is not None:
+            print("Initializing backbone weights from: " + self.args.pretrain)
+            self.net_G.load_state_dict(torch.load(self.args.pretrain), strict=False)
+            self.net_G.to(self.device)
+            self.net_G.eval()
         else:
             print('training from scratch...')
+        print("\n")
 
     def _timer_update(self):
         self.global_step = (self.epoch_id-self.epoch_to_start) * self.steps_per_epoch + self.batch_id
@@ -154,7 +160,7 @@ class CDTrainer():
         return imps, est
 
     def _visualize_pred(self):
-        pred = torch.argmax(self.G_pred[-1], dim=1, keepdim=True)
+        pred = torch.argmax(self.G_final_pred, dim=1, keepdim=True)
         pred_vis = pred * 255
         return pred_vis
 
@@ -176,7 +182,7 @@ class CDTrainer():
         update metric
         """
         target = self.batch['L'].to(self.device).detach()
-        G_pred = self.G_pred[-1].detach()
+        G_pred = self.G_final_pred.detach()
 
         G_pred = torch.argmax(G_pred, dim=1)
 
@@ -261,10 +267,21 @@ class CDTrainer():
         img_in2 = batch['B'].to(self.device)
         self.G_pred = self.net_G(img_in1, img_in2)
 
+        if self.multi_scale_infer == "True":
+            self.G_final_pred = torch.zeros(self.G_pred[-1].size()).to(self.device)
+            for pred in self.G_pred:
+                if pred.size(2) != self.G_pred[-1].size(2):
+                    self.G_final_pred = self.G_final_pred + F.interpolate(pred, size=self.G_pred[-1].size(2), mode="nearest")
+                else:
+                    self.G_final_pred = self.G_final_pred + pred
+            self.G_final_pred = self.G_final_pred/len(self.G_pred)
+        else:
+            self.G_final_pred = self.G_pred[-1]
 
+            
     def _backward_G(self):
         gt = self.batch['L'].to(self.device).float()
-        if self.multi_pred:
+        if self.multi_scale_train == "True":
             i         = 0
             temp_loss = 0.0
             for pred in self.G_pred:
@@ -293,8 +310,13 @@ class CDTrainer():
             self.is_training = True
             self.net_G.train()  # Set model to training mode
             # Iterate over data.
-            self.logger.write('lr: %0.7f\n' % self.optimizer_G.param_groups[0]['lr'])
+            self.logger.write('lr: %0.7f\n \n' % self.optimizer_G.param_groups[0]['lr'])
             for self.batch_id, batch in enumerate(self.dataloaders['train'], 0):
+                #Shuffeling AB
+                if self.shuffle_AB=="True":
+                    if (np.random.random(1) < 0.5):
+                        batch["A"], batch["B"] = batch["B"], batch["A"]
+
                 self._forward_pass(batch)
                 # update G
                 self.optimizer_G.zero_grad()
