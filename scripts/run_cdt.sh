@@ -15,7 +15,7 @@ lr=0.01
 max_epochs=200
 
 #Network
-net_G=ChangeFormerV5
+net_G=ChangeFormerV6
 #ChangeFormerV1/2/3/4
 #V1: Transformer encoder and COnvolutional decoder
 #V2: Transformer Encoder -> Difference -> Transformer Decoder
