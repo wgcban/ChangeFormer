@@ -982,7 +982,7 @@ class EncoderTransformer_x2(nn.Module):
         self.embed_dims     = embed_dims
 
         # patch embedding definitions
-        self.patch_embed1 = OverlapPatchEmbed(img_size=img_size, patch_size=3, stride=2, in_chans=in_chans,
+        self.patch_embed1 = OverlapPatchEmbed(img_size=img_size, patch_size=7, stride=2, in_chans=in_chans,
                                               embed_dim=embed_dims[0])
         self.patch_embed2 = OverlapPatchEmbed(img_size=img_size // 2, patch_size=3, stride=2, in_chans=embed_dims[0],
                                               embed_dim=embed_dims[1])
@@ -993,8 +993,8 @@ class EncoderTransformer_x2(nn.Module):
         self.patch_embed5 = OverlapPatchEmbed(img_size=img_size // 16, patch_size=3, stride=2, in_chans=embed_dims[3],
                                               embed_dim=embed_dims[4])
 
-        # main  encoder
-        dpr = [x.item() for x in torch.linspace(0, drop_path_rate, sum(depths))]  # stochastic depth decay rule
+        # Stage-1 (x1/2 scale)
+        dpr = [x.item() for x in torch.linspace(0, drop_path_rate, sum(depths))]
         cur = 0
         self.block1 = nn.ModuleList([Block(
             dim=embed_dims[0], num_heads=num_heads[0], mlp_ratio=mlp_ratios[0], qkv_bias=qkv_bias, qk_scale=qk_scale,
@@ -1002,14 +1002,8 @@ class EncoderTransformer_x2(nn.Module):
             sr_ratio=sr_ratios[0])
             for i in range(depths[0])])
         self.norm1 = norm_layer(embed_dims[0])
-        # intra-patch encoder
-        self.patch_block1 = nn.ModuleList([Block(
-            dim=embed_dims[1], num_heads=num_heads[0], mlp_ratio=mlp_ratios[0], qkv_bias=qkv_bias, qk_scale=qk_scale,
-            drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer,
-            sr_ratio=sr_ratios[0])
-            for i in range(1)])
-        self.pnorm1 = norm_layer(embed_dims[1])
-        # main  encoder
+        
+        # Stage-2 (x1/4 scale)
         cur += depths[0]
         self.block2 = nn.ModuleList([Block(
             dim=embed_dims[1], num_heads=num_heads[1], mlp_ratio=mlp_ratios[1], qkv_bias=qkv_bias, qk_scale=qk_scale,
@@ -1017,14 +1011,8 @@ class EncoderTransformer_x2(nn.Module):
             sr_ratio=sr_ratios[1])
             for i in range(depths[1])])
         self.norm2 = norm_layer(embed_dims[1])
-        # intra-patch encoder
-        self.patch_block2 = nn.ModuleList([Block(
-            dim=embed_dims[2], num_heads=num_heads[1], mlp_ratio=mlp_ratios[1], qkv_bias=qkv_bias, qk_scale=qk_scale,
-            drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer,
-            sr_ratio=sr_ratios[1])
-            for i in range(1)])
-        self.pnorm2 = norm_layer(embed_dims[2])
-        # main  encoder
+       
+       # Stage-3 (x1/8 scale)
         cur += depths[1]
         self.block3 = nn.ModuleList([Block(
             dim=embed_dims[2], num_heads=num_heads[2], mlp_ratio=mlp_ratios[2], qkv_bias=qkv_bias, qk_scale=qk_scale,
@@ -1032,14 +1020,8 @@ class EncoderTransformer_x2(nn.Module):
             sr_ratio=sr_ratios[2])
             for i in range(depths[2])])
         self.norm3 = norm_layer(embed_dims[2])
-        # intra-patch encoder
-        self.patch_block3 = nn.ModuleList([Block(
-            dim=embed_dims[3], num_heads=num_heads[1], mlp_ratio=mlp_ratios[2], qkv_bias=qkv_bias, qk_scale=qk_scale,
-            drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer,
-            sr_ratio=sr_ratios[2])
-            for i in range(1)])
-        self.pnorm3 = norm_layer(embed_dims[3])
-        # main  encoder
+        
+        # Stage-4 (x1/16 scale)
         cur += depths[2]
         self.block4 = nn.ModuleList([Block(
             dim=embed_dims[3], num_heads=num_heads[3], mlp_ratio=mlp_ratios[3], qkv_bias=qkv_bias, qk_scale=qk_scale,
@@ -1047,14 +1029,8 @@ class EncoderTransformer_x2(nn.Module):
             sr_ratio=sr_ratios[3])
             for i in range(depths[3])])
         self.norm4 = norm_layer(embed_dims[3])
-        # intra-patch encoder
-        self.patch_block4 = nn.ModuleList([Block(
-            dim=embed_dims[4], num_heads=num_heads[1], mlp_ratio=mlp_ratios[3], qkv_bias=qkv_bias, qk_scale=qk_scale,
-            drop=drop_rate, attn_drop=attn_drop_rate, drop_path=dpr[cur + i], norm_layer=norm_layer,
-            sr_ratio=sr_ratios[3])
-            for i in range(1)])
-        self.pnorm4 = norm_layer(embed_dims[4])
-        # main  encoder
+        
+        # Stage-5 (x1/32 scale)
         cur += depths[3]
         self.block5 = nn.ModuleList([Block(
             dim=embed_dims[4], num_heads=num_heads[4], mlp_ratio=mlp_ratios[4], qkv_bias=qkv_bias, qk_scale=qk_scale,
@@ -1178,7 +1154,7 @@ def conv_diff(in_channels, out_channels):
 def make_prediction(in_channels, out_channels):
     return nn.Sequential(
         nn.Conv2d(in_channels,out_channels,kernel_size=1),
-        nn.PReLU()
+        nn.ReLU()
     )
 
 class DecoderTransformer_x2(nn.Module):
@@ -1404,11 +1380,15 @@ class DecoderTransformer_x2_v2(nn.Module):
         #self.linear_pred = nn.Conv2d(embedding_dim, self.num_classes, kernel_size=1)
         self.convd2x    = UpsampleConvLayer(self.embedding_dim, self.embedding_dim, kernel_size=4, stride=2)
         self.dense_2x   = nn.Sequential( ResidualBlock(self.embedding_dim))
-        self.convd1x    = UpsampleConvLayer(self.embedding_dim, self.embedding_dim, kernel_size=4, stride=2)
-        self.dense_1x   = nn.Sequential( ResidualBlock(self.embedding_dim))
 
         #Final prediction
-        self.change_probability = ConvLayer(self.embedding_dim, self.output_nc, kernel_size=3, stride=1, padding=1)
+        self.change_probability = nn.Sequential(
+                                    nn.Conv2d(  in_channels = self.embedding_dim,
+                                                out_channels= self.output_nc,
+                                                kernel_size = 3,
+                                                padding = 1),
+                                    nn.ReLU()
+        )
         
         #Final activation
         self.output_softmax     = decoder_softmax
@@ -1449,7 +1429,7 @@ class DecoderTransformer_x2_v2(nn.Module):
         ############## MLP decoder on C1-C4 ###########
         n, _, h, w = c5_1.shape
 
-        outputs = [] #Multi-scale outputs adding here
+        outputs = [] #Multi-scale outputs append to this
         
         #Stage-1 (x1/32 scale)
         _c5 = self.linear_c5(torch.cat((c5_1, c5_2), dim=1)).permute(0,2,1).reshape(n, -1, c5_1.shape[2], c5_1.shape[3])
@@ -1477,7 +1457,7 @@ class DecoderTransformer_x2_v2(nn.Module):
 
         #Stage-1 (x1/2 scale)
         _c1 = self.linear_c1(torch.cat((c1_1, c1_2), dim=1)).permute(0,2,1).reshape(n, -1, c1_1.shape[2], c1_1.shape[3])
-        p_c1  = self.make_pred_c2(_c1)
+        p_c1  = self.make_pred_c1(_c1)
         outputs.append(p_c1) 
 
         #Fuse all scales (1/2, 1/4, 1/8, 1/16, and 1/32)
@@ -1509,13 +1489,13 @@ class ChangeFormerV5(nn.Module):
         #Transformer Encoder
         self.embed_dims = [32, 64, 128, 320, 512]
         self.depths     = [3, 3, 4, 6, 3] #[3, 3, 6, 18, 3]
-        self.Tenc_x2   = EncoderTransformer_x2(img_size=256, patch_size=3, in_chans=input_nc, num_classes=output_nc, embed_dims=self.embed_dims,
+        self.Tenc_x2    = EncoderTransformer_x2(img_size=256, patch_size=3, in_chans=input_nc, num_classes=output_nc, embed_dims=self.embed_dims,
                  num_heads=[2, 2, 4, 8, 16], mlp_ratios=[2, 2, 2, 2, 2], qkv_bias=False, qk_scale=None, drop_rate=0.,
                  attn_drop_rate=0., drop_path_rate=0., norm_layer=nn.LayerNorm,
                  depths=self.depths, sr_ratios=[8, 4, 2, 1, 1])
         
         #Transformer Decoder
-        self.TDec_x2   = DecoderTransformer_x2_v2(input_transform='multiple_select', in_index=[0, 1, 2, 3, 4], align_corners=True, 
+        self.TDec_x2    = DecoderTransformer_x2_v2(input_transform='multiple_select', in_index=[0, 1, 2, 3, 4], align_corners=True, 
                     in_channels = self.embed_dims, embedding_dim= 64, output_nc=output_nc, 
                     decoder_softmax = decoder_softmax, feature_strides=[2, 4, 8, 16, 32])
 
