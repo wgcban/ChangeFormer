@@ -120,8 +120,6 @@ class ResidualBlock(torch.nn.Module):
         return out
     
     
-
-    
     
 def init_linear(linear):
     init.xavier_normal(linear.weight)

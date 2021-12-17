@@ -185,4 +185,31 @@ class TransformerDecoder(nn.Module):
             x = ff(x)
         return x
 
+from scipy.io import savemat
+def save_to_mat(x1, x2, fx1, fx2, cp, file_name):
+    #Save to mat files
+        x1_np = x1.detach().cpu().numpy()
+        x2_np = x2.detach().cpu().numpy()
+        
+        fx1_0_np = fx1[0].detach().cpu().numpy()
+        fx2_0_np = fx2[0].detach().cpu().numpy()
+        fx1_1_np = fx1[1].detach().cpu().numpy()
+        fx2_1_np = fx2[1].detach().cpu().numpy()
+        fx1_2_np = fx1[2].detach().cpu().numpy()
+        fx2_2_np = fx2[2].detach().cpu().numpy()
+        fx1_3_np = fx1[3].detach().cpu().numpy()
+        fx2_3_np = fx2[3].detach().cpu().numpy()
+        fx1_4_np = fx1[4].detach().cpu().numpy()
+        fx2_4_np = fx2[4].detach().cpu().numpy()
+        
+        cp_np = cp[-1].detach().cpu().numpy()
+
+        mdic = {'x1': x1_np, 'x2': x2_np, 
+                'fx1_0': fx1_0_np, 'fx1_1': fx1_1_np, 'fx1_2': fx1_2_np, 'fx1_3': fx1_3_np, 'fx1_4': fx1_4_np,
+                'fx2_0': fx2_0_np, 'fx2_1': fx2_1_np, 'fx2_2': fx2_2_np, 'fx2_3': fx2_3_np, 'fx2_4': fx2_4_np,
+                "final_pred": cp_np}
+                
+        savemat("/media/lidan/ssd2/ChangeFormer/vis/mat/"+file_name+".mat", mdic)
+
+
 
