@@ -312,11 +312,6 @@ class CDTrainer():
             # Iterate over data.
             self.logger.write('lr: %0.7f\n \n' % self.optimizer_G.param_groups[0]['lr'])
             for self.batch_id, batch in enumerate(self.dataloaders['train'], 0):
-                #Shuffeling AB
-                if self.shuffle_AB=="True":
-                    if (np.random.random(1) < 0.5):
-                        batch["A"], batch["B"] = batch["B"], batch["A"]
-
                 self._forward_pass(batch)
                 # update G
                 self.optimizer_G.zero_grad()

@@ -1562,7 +1562,7 @@ class DecoderTransformer_v3(nn.Module):
         # Stage 3: x1/8 scale
         _c3_1 = self.linear_c3(c3_1).permute(0,2,1).reshape(n, -1, c3_1.shape[2], c3_1.shape[3])
         _c3_2 = self.linear_c3(c3_2).permute(0,2,1).reshape(n, -1, c3_2.shape[2], c3_2.shape[3])
-        _c3   = self.diff_c3(torch.cat((_c3_1, _c3_2), dim=1)) 
+        _c3   = self.diff_c3(torch.cat((_c3_1, _c3_2), dim=1)) + F.interpolate(_c4, scale_factor=2, mode="bilinear")
         p_c3  = self.make_pred_c3(_c3)
         outputs.append(p_c3)
         _c3_up= resize(_c3, size=c1_2.size()[2:], mode='bilinear', align_corners=False)
@@ -1570,7 +1570,7 @@ class DecoderTransformer_v3(nn.Module):
         # Stage 2: x1/4 scale
         _c2_1 = self.linear_c2(c2_1).permute(0,2,1).reshape(n, -1, c2_1.shape[2], c2_1.shape[3])
         _c2_2 = self.linear_c2(c2_2).permute(0,2,1).reshape(n, -1, c2_2.shape[2], c2_2.shape[3])
-        _c2   = self.diff_c2(torch.cat((_c2_1, _c2_2), dim=1))
+        _c2   = self.diff_c2(torch.cat((_c2_1, _c2_2), dim=1)) + F.interpolate(_c3, scale_factor=2, mode="bilinear")
         p_c2  = self.make_pred_c2(_c2)
         outputs.append(p_c2)
         _c2_up= resize(_c2, size=c1_2.size()[2:], mode='bilinear', align_corners=False)
@@ -1578,7 +1578,7 @@ class DecoderTransformer_v3(nn.Module):
         # Stage 1: x1/2 scale
         _c1_1 = self.linear_c1(c1_1).permute(0,2,1).reshape(n, -1, c1_1.shape[2], c1_1.shape[3])
         _c1_2 = self.linear_c1(c1_2).permute(0,2,1).reshape(n, -1, c1_2.shape[2], c1_2.shape[3])
-        _c1   = self.diff_c1(torch.cat((_c1_1, _c1_2), dim=1))
+        _c1   = self.diff_c1(torch.cat((_c1_1, _c1_2), dim=1)) + F.interpolate(_c2, scale_factor=2, mode="bilinear")
         p_c1  = self.make_pred_c1(_c1)
         outputs.append(p_c1)
 
@@ -1610,7 +1610,7 @@ class ChangeFormerV5(nn.Module):
         #Transformer Encoder
         self.embed_dims = [64, 128, 320, 512]
         self.depths     = [3, 3, 4, 3] #[3, 3, 6, 18, 3]
-        self.embedding_dim = 64
+        self.embedding_dim = 256
 
         self.Tenc_x2    = EncoderTransformer_v3(img_size=256, patch_size=3, in_chans=input_nc, num_classes=output_nc, embed_dims=self.embed_dims,
                  num_heads=[2, 4, 8, 16], mlp_ratios=[2, 2, 2, 2], qkv_bias=False, qk_scale=None, drop_rate=0.,
