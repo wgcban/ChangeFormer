@@ -22,8 +22,8 @@ einops  0.3.0
 Clone this repo:
 
 ```shell
-git clone https://github.com/justchenhao/BIT_CD.git
-cd BIT_CD
+https://github.com/wgcban/ChangeFormer.git
+cd ChangeFormer
 ```
 
 ## Quick Start
