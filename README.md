@@ -47,25 +47,40 @@ You can find the training script `run_cd.sh` in the folder `scripts`. You can ru
 The detailed script file `run_cd.sh` is as follows:
 
 ```cmd
+#!/usr/bin/env bash
+
+#GPUs
 gpus=0
-checkpoint_root=checkpoints 
-data_name=LEVIR  # dataset name 
 
-img_size=256
-batch_size=8
-lr=0.01
-max_epochs=200  #training epochs
-net_G=base_transformer_pos_s4_dd8 # model name
-#base_resnet18
-#base_transformer_pos_s4_dd8
-#base_transformer_pos_s4_dd8_dedim8
+#Set paths
+checkpoint_root=/media/lidan/ssd2/ChangeFormer/checkpoints
+vis_root=/media/lidan/ssd2/ChangeFormer/vis
+data_name=LEVIR #LEVIR, DSIFN
+
+
+img_size=256    #Choices=128, 256, 512
+batch_size=8    #Choices=8, 16, 32, 64
+lr=0.01         
+max_epochs=200
+
+net_G=ChangeFormerV5    #Choices=ChangeFormerV1/2/3/4/5
+
 lr_policy=linear
+optimizer=sgd           #Choices: sgd, adam
+loss=ce                 #Choices: ce, fl (Focal Loss), miou
+multi_scale_train=True
+multi_scale_infer=False
+shuffle_AB=False
 
-split=train  # training txt
-split_val=val  #validation txt
-project_name=CD_${net_G}_${data_name}_b${batch_size}_lr${lr}_${split}_${split_val}_${max_epochs}_${lr_policy}
+#Initializing from pretrained weights
+pretrain=/media/lidan/ssd2/ChangeFormer/pretrained_segformer/segformer.b2.512x512.ade.160k.pth
 
-python main_cd.py --img_size ${img_size} --checkpoint_root ${checkpoint_root} --lr_policy ${lr_policy} --split ${split} --split_val ${split_val} --net_G ${net_G} --gpu_ids ${gpus} --max_epochs ${max_epochs} --project_name ${project_name} --batch_size ${batch_size} --data_name ${data_name}  --lr ${lr}
+#Train and Validation splits
+split=train         #trainval
+split_val=test      #test
+project_name=CD_${net_G}_${data_name}_b${batch_size}_lr${lr}_${optimizer}_${split}_${split_val}_${max_epochs}_${lr_policy}_${loss}_multi_train_${multi_scale_train}_multi_infer_${multi_scale_infer}_shuffle_AB_${shuffle_AB}_embed_dim_${embed_dim}
+
+CUDA_VISIBLE_DEVICES=0 python main_cd.py --img_size ${img_size} --loss ${loss} --checkpoint_root ${checkpoint_root} --vis_root ${vis_root} --lr_policy ${lr_policy} --optimizer ${optimizer} --pretrain ${pretrain} --split ${split} --split_val ${split_val} --net_G ${net_G} --multi_scale_train ${multi_scale_train} --multi_scale_infer ${multi_scale_infer} --gpu_ids ${gpus} --max_epochs ${max_epochs} --project_name ${project_name} --batch_size ${batch_size} --shuffle_AB ${shuffle_AB} --data_name ${data_name}  --lr ${lr}
 ```
 
 ## Evaluate
