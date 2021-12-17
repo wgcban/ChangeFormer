@@ -4,9 +4,9 @@
 
 Here, we provide the pytorch implementation of the paper: Remote Sensing Image Change Detection with Transformers.
 
-For more ore information, please see our published paper at [IEEE TGRS](https://ieeexplore.ieee.org/document/9491802) or [arxiv](https://arxiv.org/abs/2103.00208). 
+For more ore information, please see our published paper at [IEEE TGRS]() or [arxiv](). 
 
-![image-20210228153142126](./images/pipeline.png)
+![image-20210228153142126](./images/IGARS_ChangeFormer-method.jpg)
 
 ## Requirements
 
