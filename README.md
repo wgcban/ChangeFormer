@@ -1,4 +1,4 @@
-# ChangeFormer: An Efficient Transformer Architecture for Change Detection in Remote Sensing Images
+# ChangeFormer: A Transformer Siamese Network for Change Detection
 
 [Wele Gedara Chaminda Bandara](), [Vishal M. Patel]()
 
