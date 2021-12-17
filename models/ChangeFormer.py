@@ -1605,7 +1605,7 @@ class DecoderTransformer_v3(nn.Module):
 # ChangeFormerV5:
 class ChangeFormerV5(nn.Module):
 
-    def __init__(self, input_nc=3, output_nc=2, decoder_softmax=True):
+    def __init__(self, input_nc=3, output_nc=2, decoder_softmax=False):
         super(ChangeFormerV5, self).__init__()
         #Transformer Encoder
         self.embed_dims = [64, 128, 320, 512]

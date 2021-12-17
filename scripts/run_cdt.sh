@@ -11,7 +11,7 @@ data_name=LEVIR #LEVIR, DSIFN
 #Image Details
 img_size=256
 batch_size=8
-lr=0.005
+lr=0.01
 max_epochs=200
 
 #Network
