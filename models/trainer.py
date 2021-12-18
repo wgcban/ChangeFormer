@@ -17,6 +17,7 @@ from misc.logger_tool import Logger, Timer
 
 from utils import de_norm
 
+from tqdm import tqdm
 
 class CDTrainer():
 
@@ -310,8 +311,9 @@ class CDTrainer():
             self.is_training = True
             self.net_G.train()  # Set model to training mode
             # Iterate over data.
+            total = len(self.dataloaders['train'])
             self.logger.write('lr: %0.7f\n \n' % self.optimizer_G.param_groups[0]['lr'])
-            for self.batch_id, batch in enumerate(self.dataloaders['train'], 0):
+            for self.batch_id, batch in tqdm(enumerate(self.dataloaders['train'], 0), total=total):
                 self._forward_pass(batch)
                 # update G
                 self.optimizer_G.zero_grad()
