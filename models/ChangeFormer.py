@@ -1609,12 +1609,15 @@ class ChangeFormerV5(nn.Module):
         super(ChangeFormerV5, self).__init__()
         #Transformer Encoder
         self.embed_dims = [64, 128, 320, 512]
-        self.depths     = [3, 3, 4, 3] #[3, 3, 6, 18, 3]
+        self.depths     = [3, 4, 16, 3] #[3, 3, 6, 18, 3]
         self.embedding_dim = 256
+        self.drop_rate = 0.0
+        self.attn_drop = 0.0
+        self.drop_path_rate = 0.1
 
-        self.Tenc_x2    = EncoderTransformer_v3(img_size=256, patch_size=3, in_chans=input_nc, num_classes=output_nc, embed_dims=self.embed_dims,
-                 num_heads=[2, 4, 8, 16], mlp_ratios=[2, 2, 2, 2], qkv_bias=False, qk_scale=None, drop_rate=0.,
-                 attn_drop_rate=0., drop_path_rate=0., norm_layer=nn.LayerNorm,
+        self.Tenc_x2    = EncoderTransformer_v3(img_size=256, patch_size = 4, in_chans=input_nc, num_classes=output_nc, embed_dims=self.embed_dims,
+                 num_heads = [1, 2, 5, 8], mlp_ratios=[4, 4, 4, 4], qkv_bias=True, qk_scale=None, drop_rate=self.drop_rate,
+                 attn_drop_rate = self.attn_drop, drop_path_rate=self.drop_path_rate, norm_layer=partial(nn.LayerNorm, eps=1e-6),
                  depths=self.depths, sr_ratios=[8, 4, 2, 1])
         
         #Transformer Decoder

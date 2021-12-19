@@ -45,6 +45,9 @@ class CDTrainer():
         elif args.optimizer == "adam":
             self.optimizer_G = optim.Adam(self.net_G.parameters(), lr=self.lr,
                                      weight_decay=0)
+        elif args.optimizer == "adamw":
+            self.optimizer_G = optim.AdamW(self.net_G.parameters(), lr=self.lr,
+                                    betas=(0.9, 0.999), weight_decay=0.01)
 
         # self.optimizer_G = optim.Adam(self.net_G.parameters(), lr=self.lr)
 
