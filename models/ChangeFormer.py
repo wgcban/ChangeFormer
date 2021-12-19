@@ -1344,7 +1344,7 @@ class EncoderTransformer_v3(nn.Module):
         self.patch_embed4 = OverlapPatchEmbed(img_size=img_size // 8, patch_size=3, stride=2, in_chans=embed_dims[2],
                                               embed_dim=embed_dims[3])
 
-        # Stage-1 (x1/2 scale)
+        # Stage-1 (x1/4 scale)
         dpr = [x.item() for x in torch.linspace(0, drop_path_rate, sum(depths))]
         cur = 0
         self.block1 = nn.ModuleList([Block(
@@ -1354,7 +1354,7 @@ class EncoderTransformer_v3(nn.Module):
             for i in range(depths[0])])
         self.norm1 = norm_layer(embed_dims[0])
         
-        # Stage-2 (x1/4 scale)
+        # Stage-2 (x1/8 scale)
         cur += depths[0]
         self.block2 = nn.ModuleList([Block(
             dim=embed_dims[1], num_heads=num_heads[1], mlp_ratio=mlp_ratios[1], qkv_bias=qkv_bias, qk_scale=qk_scale,
@@ -1363,7 +1363,7 @@ class EncoderTransformer_v3(nn.Module):
             for i in range(depths[1])])
         self.norm2 = norm_layer(embed_dims[1])
        
-       # Stage-3 (x1/8 scale)
+       # Stage-3 (x1/16 scale)
         cur += depths[1]
         self.block3 = nn.ModuleList([Block(
             dim=embed_dims[2], num_heads=num_heads[2], mlp_ratio=mlp_ratios[2], qkv_bias=qkv_bias, qk_scale=qk_scale,
@@ -1372,7 +1372,7 @@ class EncoderTransformer_v3(nn.Module):
             for i in range(depths[2])])
         self.norm3 = norm_layer(embed_dims[2])
         
-        # Stage-4 (x1/16 scale)
+        # Stage-4 (x1/32 scale)
         cur += depths[2]
         self.block4 = nn.ModuleList([Block(
             dim=embed_dims[3], num_heads=num_heads[3], mlp_ratio=mlp_ratios[3], qkv_bias=qkv_bias, qk_scale=qk_scale,
@@ -1550,7 +1550,7 @@ class DecoderTransformer_v3(nn.Module):
         n, _, h, w = c4_1.shape
 
         outputs = []
-        # Stage 4: x1/16 scale
+        # Stage 4: x1/32 scale
         _c4_1 = self.linear_c4(c4_1).permute(0,2,1).reshape(n, -1, c4_1.shape[2], c4_1.shape[3])
         _c4_2 = self.linear_c4(c4_2).permute(0,2,1).reshape(n, -1, c4_2.shape[2], c4_2.shape[3])
         _c4   = self.diff_c4(torch.cat((_c4_1, _c4_2), dim=1))
@@ -1558,7 +1558,7 @@ class DecoderTransformer_v3(nn.Module):
         outputs.append(p_c4)
         _c4_up= resize(_c4, size=c1_2.size()[2:], mode='bilinear', align_corners=False)
 
-        # Stage 3: x1/8 scale
+        # Stage 3: x1/16 scale
         _c3_1 = self.linear_c3(c3_1).permute(0,2,1).reshape(n, -1, c3_1.shape[2], c3_1.shape[3])
         _c3_2 = self.linear_c3(c3_2).permute(0,2,1).reshape(n, -1, c3_2.shape[2], c3_2.shape[3])
         _c3   = self.diff_c3(torch.cat((_c3_1, _c3_2), dim=1)) + F.interpolate(_c4, scale_factor=2, mode="bilinear")
@@ -1566,7 +1566,7 @@ class DecoderTransformer_v3(nn.Module):
         outputs.append(p_c3)
         _c3_up= resize(_c3, size=c1_2.size()[2:], mode='bilinear', align_corners=False)
 
-        # Stage 2: x1/4 scale
+        # Stage 2: x1/8 scale
         _c2_1 = self.linear_c2(c2_1).permute(0,2,1).reshape(n, -1, c2_1.shape[2], c2_1.shape[3])
         _c2_2 = self.linear_c2(c2_2).permute(0,2,1).reshape(n, -1, c2_2.shape[2], c2_2.shape[3])
         _c2   = self.diff_c2(torch.cat((_c2_1, _c2_2), dim=1)) + F.interpolate(_c3, scale_factor=2, mode="bilinear")
@@ -1574,7 +1574,7 @@ class DecoderTransformer_v3(nn.Module):
         outputs.append(p_c2)
         _c2_up= resize(_c2, size=c1_2.size()[2:], mode='bilinear', align_corners=False)
 
-        # Stage 1: x1/2 scale
+        # Stage 1: x1/4 scale
         _c1_1 = self.linear_c1(c1_1).permute(0,2,1).reshape(n, -1, c1_1.shape[2], c1_1.shape[3])
         _c1_2 = self.linear_c1(c1_2).permute(0,2,1).reshape(n, -1, c1_2.shape[2], c1_2.shape[3])
         _c1   = self.diff_c1(torch.cat((_c1_1, _c1_2), dim=1)) + F.interpolate(_c2, scale_factor=2, mode="bilinear")
@@ -1584,11 +1584,11 @@ class DecoderTransformer_v3(nn.Module):
         #Linear Fusion of difference image from all scales
         _c = self.linear_fuse(torch.cat((_c4_up, _c3_up, _c2_up, _c1), dim=1))
 
-        #Upsampling x2
+        #Upsampling x2 (x1/2 scale)
         x = self.convd2x(_c)
         #Residual block
         x = self.dense_2x(x)
-        #Upsampling x2
+        #Upsampling x2 (x1 scale)
         x = self.convd1x(x)
         #Residual block
         x = self.dense_1x(x)
