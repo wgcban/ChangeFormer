@@ -1133,12 +1133,16 @@ def conv_diff(in_channels, out_channels):
         nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
         nn.ReLU(),
         nn.BatchNorm2d(out_channels),
-        ResidualBlock(out_channels)
+        nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
     )
 
+#Intermediate prediction module
 def make_prediction(in_channels, out_channels):
     return nn.Sequential(
-        nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1)
+        nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
+        nn.ReLU(),
+        nn.BatchNorm2d(out_channels),
+        nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
     )
 
 class DecoderTransformer_x2(nn.Module):
@@ -1613,10 +1617,10 @@ class ChangeFormerV5(nn.Module):
         super(ChangeFormerV5, self).__init__()
         #Transformer Encoder
         self.embed_dims = [64, 128, 320, 512]
-        self.depths     = [3, 4, 8, 3] #[3, 3, 6, 18, 3]
-        self.embedding_dim = 128
-        self.drop_rate = 0.1
-        self.attn_drop = 0.1
+        self.depths     = [3, 6, 16, 3] #[3, 3, 6, 18, 3]
+        self.embedding_dim = 256
+        self.drop_rate = 0.0
+        self.attn_drop = 0.0
         self.drop_path_rate = 0.1 
 
         self.Tenc_x2    = EncoderTransformer_v3(img_size=256, patch_size = 4, in_chans=input_nc, num_classes=output_nc, embed_dims=self.embed_dims,
