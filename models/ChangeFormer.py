@@ -1609,7 +1609,7 @@ class ChangeFormerV5(nn.Module):
         super(ChangeFormerV5, self).__init__()
         #Transformer Encoder
         self.embed_dims = [64, 128, 320, 512]
-        self.depths     = [3, 4, 16, 3] #[3, 3, 6, 18, 3]
+        self.depths     = [3, 4, 8, 3] #[3, 3, 6, 18, 3]
         self.embedding_dim = 256
         self.drop_rate = 0.0
         self.attn_drop = 0.0
