@@ -1589,7 +1589,7 @@ class DecoderTransformer_v3(nn.Module):
         #Residual block
         x = self.dense_2x(x)
         #Upsampling x2
-        x = self.convd1x(_c)
+        x = self.convd1x(x)
         #Residual block
         x = self.dense_1x(x)
 
