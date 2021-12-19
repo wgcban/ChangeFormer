@@ -1613,7 +1613,7 @@ class ChangeFormerV5(nn.Module):
         self.embedding_dim = 256
         self.drop_rate = 0.0
         self.attn_drop = 0.0
-        self.drop_path_rate = 0.1
+        self.drop_path_rate = 0.1 
 
         self.Tenc_x2    = EncoderTransformer_v3(img_size=256, patch_size = 4, in_chans=input_nc, num_classes=output_nc, embed_dims=self.embed_dims,
                  num_heads = [1, 2, 5, 8], mlp_ratios=[4, 4, 4, 4], qkv_bias=True, qk_scale=None, drop_rate=self.drop_rate,
