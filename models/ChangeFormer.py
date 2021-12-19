@@ -1506,7 +1506,7 @@ class DecoderTransformer_v3(nn.Module):
         self.linear_fuse = nn.Sequential(
             nn.Conv2d(   in_channels=self.embedding_dim*len(in_channels), out_channels=self.embedding_dim,
                                         kernel_size=1),
-            nn.SyncBatchNorm(self.embedding_dim)
+            nn.BatchNorm2d(self.embedding_dim)
         )
 
         #Final predction head
