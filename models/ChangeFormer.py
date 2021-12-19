@@ -1138,8 +1138,7 @@ def conv_diff(in_channels, out_channels):
 
 def make_prediction(in_channels, out_channels):
     return nn.Sequential(
-        nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
-        nn.ReLU()
+        nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1)
     )
 
 class DecoderTransformer_x2(nn.Module):
