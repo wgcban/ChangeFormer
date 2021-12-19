@@ -1335,7 +1335,7 @@ class EncoderTransformer_v3(nn.Module):
         self.embed_dims     = embed_dims
 
         # patch embedding definitions
-        self.patch_embed1 = OverlapPatchEmbed(img_size=img_size, patch_size=7, stride=2, in_chans=in_chans,
+        self.patch_embed1 = OverlapPatchEmbed(img_size=img_size, patch_size=7, stride=4, in_chans=in_chans,
                                               embed_dim=embed_dims[0])
         self.patch_embed2 = OverlapPatchEmbed(img_size=img_size // 2, patch_size=3, stride=2, in_chans=embed_dims[0],
                                               embed_dim=embed_dims[1])
@@ -1588,6 +1588,11 @@ class DecoderTransformer_v3(nn.Module):
         x = self.convd2x(_c)
         #Residual block
         x = self.dense_2x(x)
+        #Upsampling x2
+        x = self.convd1x(_c)
+        #Residual block
+        x = self.dense_1x(x)
+
         #Final prediction
         cp = self.change_probability(x)
         
@@ -1610,8 +1615,8 @@ class ChangeFormerV5(nn.Module):
         self.embed_dims = [64, 128, 320, 512]
         self.depths     = [3, 4, 8, 3] #[3, 3, 6, 18, 3]
         self.embedding_dim = 128
-        self.drop_rate = 0.0
-        self.attn_drop = 0.0
+        self.drop_rate = 0.1
+        self.attn_drop = 0.1
         self.drop_path_rate = 0.1 
 
         self.Tenc_x2    = EncoderTransformer_v3(img_size=256, patch_size = 4, in_chans=input_nc, num_classes=output_nc, embed_dims=self.embed_dims,
