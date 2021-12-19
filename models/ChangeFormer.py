@@ -1133,7 +1133,8 @@ def conv_diff(in_channels, out_channels):
         nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
         nn.ReLU(),
         nn.BatchNorm2d(out_channels),
-        nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
+        nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
+        nn.ReLU()
     )
 
 #Intermediate prediction module
@@ -1297,7 +1298,7 @@ class DecoderTransformer_x2(nn.Module):
 # ChangeFormerV4:
 class ChangeFormerV4(nn.Module):
 
-    def __init__(self, input_nc=3, output_nc=2, decoder_softmax=True):
+    def __init__(self, input_nc=3, output_nc=2, decoder_softmax=False):
         super(ChangeFormerV4, self).__init__()
         #Transformer Encoder
         self.embed_dims = [32, 64, 128, 320, 512]
@@ -1502,8 +1503,11 @@ class DecoderTransformer_v3(nn.Module):
         self.make_pred_c1 = make_prediction(in_channels=self.embedding_dim, out_channels=self.output_nc)
 
         #Final linear fusion layer
-        self.linear_fuse = nn.Conv2d(   in_channels=self.embedding_dim*len(in_channels), out_channels=self.embedding_dim,
-                                        kernel_size=1)
+        self.linear_fuse = nn.Sequential(
+            nn.Conv2d(   in_channels=self.embedding_dim*len(in_channels), out_channels=self.embedding_dim,
+                                        kernel_size=1),
+            nn.SyncBatchNorm(self.embedding_dim)
+        )
 
         #Final predction head
         self.convd2x    = UpsampleConvLayer(self.embedding_dim, self.embedding_dim, kernel_size=4, stride=2)
@@ -1588,6 +1592,12 @@ class DecoderTransformer_v3(nn.Module):
         #Linear Fusion of difference image from all scales
         _c = self.linear_fuse(torch.cat((_c4_up, _c3_up, _c2_up, _c1), dim=1))
 
+        # #Dropout
+        # if dropout_ratio > 0:
+        #     self.dropout = nn.Dropout2d(dropout_ratio)
+        # else:
+        #     self.dropout = None
+
         #Upsampling x2 (x1/2 scale)
         x = self.convd2x(_c)
         #Residual block
@@ -1629,7 +1639,7 @@ class ChangeFormerV5(nn.Module):
                  depths=self.depths, sr_ratios=[8, 4, 2, 1])
         
         #Transformer Decoder
-        self.TDec_x2   = DecoderTransformer_v3(input_transform='multiple_select', in_index=[0, 1, 2, 3], align_corners=True, 
+        self.TDec_x2   = DecoderTransformer_v3(input_transform='multiple_select', in_index=[0, 1, 2, 3], align_corners=False, 
                     in_channels = self.embed_dims, embedding_dim= self.embedding_dim, output_nc=output_nc, 
                     decoder_softmax = decoder_softmax, feature_strides=[2, 4, 8, 16])
 
