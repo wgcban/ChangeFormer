@@ -15,10 +15,10 @@ lr=0.01
 max_epochs=200
 embed_dim=64
 
-net_G=ChangeFormerV5    #Choices=ChangeFormerV1/2/3/4/5
+net_G=ChangeFormerV5        #Choices=ChangeFormerV1/2/3/4/5
 
 lr_policy=linear
-optimizer=sgd             #Choices: sgd, adam, adamw
+optimizer=sgd               #Choices: sgd, adam, adamw
 loss=ce                     #Choices: ce, fl (Focal Loss), miou
 multi_scale_train=False
 multi_scale_infer=False
