@@ -123,7 +123,7 @@ class CDDataAugmentation:
             color_jitter = transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1)
             imgs_tf = []
             for img in imgs:
-                tf = transforms.ColorJitter.get_params(
+                tf = transforms.ColorJitter(
                             color_jitter.brightness, 
                             color_jitter.contrast, 
                             color_jitter.saturation,
