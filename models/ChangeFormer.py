@@ -12,8 +12,8 @@ from timm.models.layers import DropPath, to_2tuple, trunc_normal_
 import types
 import math
 from abc import ABCMeta, abstractmethod
-from mmcv.cnn import normal_init
-from mmcv.cnn import ConvModule
+# from mmcv.cnn import normal_init
+# from mmcv.cnn import ConvModule
 import pdb
 
 from scipy.io import savemat
