@@ -13,7 +13,7 @@ img_size=256    #Choices=128, 256, 512
 batch_size=16   #Choices=8, 16, 32, 64
 lr=0.01         
 max_epochs=200
-embed_dim=256
+embed_dim=320
 
 net_G=ChangeFormerV5        #Choices=ChangeFormerV1/2/3/4/5
 
