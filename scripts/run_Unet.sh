@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#Config file to run: Fully convolutional siamese networks for change detection" (Difference Version)
+#Config file to run: Fully convolutional siamese networks for change detection" (U-Net Version)
 #Credit:
 # Rodrigo Caye Daudt
 # https://rcdaudt.github.io/
@@ -20,7 +20,7 @@ batch_size=8               #Choices=8, 16, 32, 64
 lr=0.01         
 max_epochs=200
 
-net_G=SiamUnet_diff
+net_G=Unet
 
 lr_policy=linear
 optimizer=sgd               #Choices: sgd, adam, adamw
