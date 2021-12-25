@@ -10,9 +10,9 @@ data_name=LEVIR #LEVIR, DSIFN
 
 
 img_size=256                #Choices=128, 256, 512
-batch_size=32               #Choices=8, 16, 32, 64
-lr=0.001         
-max_epochs=50
+batch_size=8               #Choices=8, 16, 32, 64
+lr=0.01         
+max_epochs=200
 
 net_G=SiamUnet_diff        #Choices=ChangeFormerV1/2/3/4/5
 
