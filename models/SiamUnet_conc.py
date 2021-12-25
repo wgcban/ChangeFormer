@@ -173,6 +173,11 @@ class SiamUnet_conc(nn.Module):
         x12d = self.do12d(F.relu(self.bn12d(self.conv12d(x1d))))
         x11d = self.conv11d(x12d)
 
-        return self.sm(x11d)
+        #Softmax layer is embedded in the loss layer
+        #out = self.sm(x11d)
+        output = []
+        output.append(x11d)
+
+        return output
 
     
