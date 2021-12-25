@@ -334,9 +334,9 @@ class BASE_Transformer(ResNet):
 
     def _forward_reshape_tokens(self, x):
         # b,c,h,w = x.shape
-        if self.pool_mode is 'max':
+        if self.pool_mode == 'max':
             x = F.adaptive_max_pool2d(x, [self.pooling_size, self.pooling_size])
-        elif self.pool_mode is 'ave':
+        elif self.pool_mode == 'ave':
             x = F.adaptive_avg_pool2d(x, [self.pooling_size, self.pooling_size])
         else:
             x = x
