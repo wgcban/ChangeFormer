@@ -14,7 +14,7 @@ batch_size=16               #Choices=8, 16, 32, 64
 lr=0.001         
 max_epochs=200
 
-net_G=SiamUnet_diff        #Choices=ChangeFormerV1/2/3/4/5
+net_G=SiamUnet_conc        #Choices=ChangeFormerV1/2/3/4/5
 
 lr_policy=linear
 optimizer=sgd               #Choices: sgd, adam, adamw
