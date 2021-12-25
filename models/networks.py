@@ -303,7 +303,7 @@ class BASE_Transformer(ResNet):
         mlp_dim = 2*dim
 
         self.with_pos = with_pos
-        if with_pos is 'learned':
+        if with_pos == 'learned':
             self.pos_embedding = nn.Parameter(torch.randn(1, self.token_len*2, 32))
         decoder_pos_size = 256//4
         self.with_decoder_pos = with_decoder_pos
