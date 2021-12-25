@@ -58,7 +58,7 @@ if __name__ == '__main__':
     parser.add_argument('--net_G', default='base_transformer_pos_s4_dd8', type=str,
                         help='base_resnet18 | base_transformer_pos_s4 | '
                              'base_transformer_pos_s4_dd8 | '
-                             'base_transformer_pos_s4_dd8_dedim8|ChangeFormerV1')
+                             'base_transformer_pos_s4_dd8_dedim8|ChangeFormerV5|SiamUnet_diff')
     parser.add_argument('--loss', default='ce', type=str)
 
     # optimizer
