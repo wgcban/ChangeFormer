@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+#Config file to run: Fully convolutional siamese networks for change detection" (Concatenation Version)
+#Credit:
+# Rodrigo Caye Daudt
+# https://rcdaudt.github.io/
+# Daudt, R. C., Le Saux, B., & Boulch, A. "Fully convolutional siamese networks for change detection". In 2018 25th IEEE International Conference on Image Processing (ICIP) (pp. 4063-4067). IEEE.
+
 #GPUs
 gpus=0
 
@@ -14,7 +20,7 @@ batch_size=8               #Choices=8, 16, 32, 64
 lr=0.01         
 max_epochs=200
 
-net_G=SiamUnet_conc        #Choices=ChangeFormerV1/2/3/4/5
+net_G=SiamUnet_conc
 
 lr_policy=linear
 optimizer=sgd               #Choices: sgd, adam, adamw
