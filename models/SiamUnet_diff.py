@@ -173,9 +173,9 @@ class SiamUnet_diff(nn.Module):
         x1d = torch.cat((pad1(x1d), torch.abs(x12_1 - x12_2)), 1)
         x12d = self.do12d(F.relu(self.bn12d(self.conv12d(x1d))))
         x11d = self.conv11d(x12d)
-        out = self.sm(x11d)
+        #out = self.sm(x11d)
 
         output = []
-        output.append(out)
+        output.append(x11d)
 
-        return 
+        return output
