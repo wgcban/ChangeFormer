@@ -13,9 +13,7 @@ class Unet(nn.Module):
     def __init__(self, input_nbr, label_nbr):
         super(Unet, self).__init__()
 
-        self.input_nbr = 2*input_nbr
-
-        self.conv11 = nn.Conv2d(input_nbr, 16, kernel_size=3, padding=1)
+        self.conv11 = nn.Conv2d(2*input_nbr, 16, kernel_size=3, padding=1)
         self.bn11 = nn.BatchNorm2d(16)
         self.do11 = nn.Dropout2d(p=0.2)
         self.conv12 = nn.Conv2d(16, 16, kernel_size=3, padding=1)
