@@ -17,7 +17,7 @@ max_epochs=50
 net_G=SiamUnet_diff        #Choices=ChangeFormerV1/2/3/4/5
 
 lr_policy=linear
-optimizer=adam               #Choices: sgd, adam, adamw
+optimizer=sgd               #Choices: sgd, adam, adamw
 loss=ce                     #Choices: ce, fl (Focal Loss), miou
 multi_scale_train=False
 multi_scale_infer=False
