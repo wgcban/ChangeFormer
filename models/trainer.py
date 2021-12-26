@@ -106,6 +106,7 @@ class CDTrainer():
             alpha   = alpha/sum(alpha)
             # weights = torch.tensor([1.0, 1.0]).cuda()
             weights = torch.tensor(alpha).cuda()
+            print(f"Weight-0 (no-change)={weights[0]}, Weight-1 (change)={weights[1]}")
             self._pxl_loss = mIoULoss(weight=weights, size_average=True, n_classes=args.n_class).cuda()
         else:
             raise NotImplemented(args.loss)
