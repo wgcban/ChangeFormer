@@ -101,7 +101,11 @@ class CDTrainer():
             print(f"alpha-0 (no-change)={alpha[0]}, alpha-1 (change)={alpha[1]}")
             self._pxl_loss  = FocalLoss(apply_nonlin = softmax_helper, alpha = alpha, gamma = 2, smooth = 1e-5)
         elif args.loss == "miou":
-            weights = torch.tensor([1.0, 1.0]).cuda()
+            print('\n Calculating Class occurances in training set...')
+            alpha   = get_alpha(dataloaders['train']) # calculare class occurences
+            alpha   = alpha/sum(alpha)
+            # weights = torch.tensor([1.0, 1.0]).cuda()
+            weights = torch.tensor(alpha).cuda()
             self._pxl_loss = mIoULoss(weight=weights, size_average=True, n_classes=args.n_class).cuda()
         else:
             raise NotImplemented(args.loss)
