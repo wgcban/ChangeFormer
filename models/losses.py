@@ -157,7 +157,7 @@ class mIoULoss(nn.Module):
     def __init__(self, weight=None, size_average=True, n_classes=2):
         super(mIoULoss, self).__init__()
         self.classes = n_classes
-        self.weights = Variable(weight * weight)
+        self.weights = Variable(weight)
 
     def forward(self, inputs, target, is_target_variable=False):
         # inputs => N x Classes x H x W
@@ -183,7 +183,7 @@ class mIoULoss(nn.Module):
         ## Sum over all pixels N x C x H x W => N x C
         union = union.view(N, self.classes, -1).sum(2)
 
-        loss = (self.weights * inter) / (self.weights * union + 1e-8)
+        loss = (self.weights * inter) / (union + 1e-8)
 
         ## Return average loss over classes and batch
         return -torch.mean(loss)

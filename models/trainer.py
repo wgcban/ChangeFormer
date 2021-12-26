@@ -105,7 +105,7 @@ class CDTrainer():
             alpha   = np.asarray(get_alpha(dataloaders['train'])) # calculare class occurences
             alpha   = alpha/np.sum(alpha)
             # weights = torch.tensor([1.0, 1.0]).cuda()
-            weights = torch.from_numpy(alpha).cuda()
+            weights = 1-torch.from_numpy(alpha).cuda()
             print(f"Weights = {weights}")
             self._pxl_loss = mIoULoss(weight=weights, size_average=True, n_classes=args.n_class).cuda()
         else:
