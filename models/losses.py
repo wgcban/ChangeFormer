@@ -224,5 +224,5 @@ class mmIoULoss(nn.Module):
         min_iou = torch.min(iou)
 
         #loss
-        loss = -min_iou
+        loss = -min_iou-torch.mean(iou)
         return loss
