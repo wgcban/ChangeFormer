@@ -11,7 +11,7 @@ import numpy as np
 from misc.metric_tool import ConfuseMatrixMeter
 from models.losses import cross_entropy
 import models.losses as losses
-from models.losses import get_alpha, softmax_helper, FocalLoss, mIoULoss
+from models.losses import get_alpha, softmax_helper, FocalLoss, mIoULoss, mmIoULoss
 
 from misc.logger_tool import Logger, Timer
 
@@ -108,6 +108,8 @@ class CDTrainer():
             weights = 1-torch.from_numpy(alpha).cuda()
             print(f"Weights = {weights}")
             self._pxl_loss = mIoULoss(weight=weights, size_average=True, n_classes=args.n_class).cuda()
+        elif args.loss == "mmiou":
+            self._pxl_loss = mmIoULoss(n_classes=args.n_class).cuda()
         else:
             raise NotImplemented(args.loss)
 
