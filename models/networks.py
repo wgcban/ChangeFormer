@@ -9,7 +9,7 @@ from einops import rearrange
 
 import models
 from models.help_funcs import Transformer, TransformerDecoder, TwoLayerConv2d
-from models.ChangeFormer import ChangeFormerV1, ChangeFormerV2, ChangeFormerV3, ChangeFormerV4, ChangeFormerV5, ChangeFormerV6, ChangeFormerV7
+from models.ChangeFormer import ChangeFormerV1, ChangeFormerV2, ChangeFormerV3, ChangeFormerV4, ChangeFormerV5, ChangeFormerV6
 from models.SiamUnet_diff import SiamUnet_diff
 from models.SiamUnet_conc import SiamUnet_conc
 from models.Unet import Unet
@@ -158,9 +158,6 @@ def define_G(args, init_type='normal', init_gain=0.02, gpu_ids=[]):
     elif args.net_G == 'ChangeFormerV6':
         net = ChangeFormerV6(embed_dim=args.embed_dim) #ChangeFormer with Transformer Encoder and Convolutional Decoder (Fuse)
     
-    elif args.net_G == 'ChangeFormerV7':
-        net = ChangeFormerV7(embed_dim=args.embed_dim) #ChangeFormer with Transformer Encoder and Convolutional Decoder (Fuse)
-
     elif args.net_G == "SiamUnet_diff":
         #Implementation of ``Fully convolutional siamese networks for change detection''
         #Code copied from: https://github.com/rcdaudt/fully_convolutional_change_detection
