@@ -1696,14 +1696,14 @@ class ChangeFormerV6(nn.Module):
 ### Pixel-wise Cross-correlation Embedding
 class pixel_CC(nn.Module):
 
-    def __init__(self, input_nc, output_nc):
+    def __init__(self, in_channels, out_channels):
         super(pixel_CC, self).__init__()
 
         self.FC = nn.Sequential(
-            nn.Conv2d(input_nc, output_nc, kernel_size=3, padding=1),
+            nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
             nn.ReLU(),
-            nn.BatchNorm2d(output_nc),
-            nn.Conv2d(output_nc, output_nc, kernel_size=3, padding=1),
+            nn.BatchNorm2d(out_channels),
+            nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
             nn.ReLU()
         )
         
