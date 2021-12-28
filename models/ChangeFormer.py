@@ -1714,8 +1714,8 @@ class pixel_CC(nn.Module):
         std1 = torch.std(x1, dim=(2,3), keepdim=True)
         std2 = torch.std(x2, dim=(2,3), keepdim=True)
         
-        x1  = (x1 - mu1)/std1
-        x2  = (x2 - mu2)/std2
+        x1  = (x1 - mu1)/(std1+1e-7)
+        x2  = (x2 - mu2)/(std2+1e-7)
 
         CC = x1*x2
 
