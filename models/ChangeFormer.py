@@ -1655,7 +1655,7 @@ class ChangeFormerV5(nn.Module):
         # exit()
         return cp
 
-# ChangeFormerV5:
+# ChangeFormerV6:
 class ChangeFormerV6(nn.Module):
 
     def __init__(self, input_nc=3, output_nc=2, decoder_softmax=False, embed_dim=256):
