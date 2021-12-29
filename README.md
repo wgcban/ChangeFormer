@@ -32,7 +32,7 @@ cd ChangeFormer
 
 We have some samples from the [LEVIR-CD](https://justchenhao.github.io/LEVIR/) dataset in the folder `samples` for a quick start.
 
-Firstly, you can download our BIT pretrained model——by [DropBox (no signin required)](https://www.dropbox.com/sh/iwwwv9ta1fnu6e9/AABcSRxt5PUggJPJEXGwUs4-a?dl=0). After downloaded the pretrained model, you can put it in `checkpoints/ChangeFormer_LEVIR/`.
+Firstly, you can download our ChangeFormer pretrained model——by [DropBox (no signin required)](https://www.dropbox.com/sh/iwwwv9ta1fnu6e9/AABcSRxt5PUggJPJEXGwUs4-a?dl=0). After downloaded the pretrained model, you can put it in `checkpoints/ChangeFormer_LEVIR/`.
 
 Then, run a demo to get started as follows:
 
@@ -141,15 +141,12 @@ Code is released for non-commercial and research purposes **only**. For commerci
 If you use this code for your research, please cite our paper:
 
 ```
-@Article{chen2021a,
-    title={Remote Sensing Image Change Detection with Transformers},
-    author={Hao Chen, Zipeng Qi and Zhenwei Shi},
-    year={2021},
-    journal={IEEE Transactions on Geoscience and Remote Sensing},
-    volume={},
-    number={},
-    pages={1-14},
-    doi={10.1109/TGRS.2021.3095166}
+@Article{
 }
 ```
+
+## References
+Appreciate the work from the following repositories:
+
+- https://github.com/justchenhao/BIT_CD 
 
