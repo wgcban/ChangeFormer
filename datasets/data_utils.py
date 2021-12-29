@@ -120,7 +120,7 @@ class CDDataAugmentation:
                     for img in imgs]
 
         if self.random_color_tf:
-            color_jitter = transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1)
+            color_jitter = transforms.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.3, hue=0.3)
             imgs_tf = []
             for img in imgs:
                 tf = transforms.ColorJitter(

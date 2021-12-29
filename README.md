@@ -2,9 +2,9 @@
 
 [Wele Gedara Chaminda Bandara](), [Vishal M. Patel]()
 
-Here, we provide the pytorch implementation of the paper: Remote Sensing Image Change Detection with Transformers.
+Here, we provide the pytorch implementation of the paper: A Transformer-Based Siamese Network for Change Detection.
 
-For more ore information, please see our published paper at [IEEE TGRS]() or [arxiv](). 
+For more ore information, please see our published paper at [arxiv](). 
 
 ![image-20210228153142126](./images/IGARS_ChangeFormer.jpeg)
 
