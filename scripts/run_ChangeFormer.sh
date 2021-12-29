@@ -11,7 +11,7 @@ data_name=LEVIR #LEVIR, DSIFN
 
 img_size=256    #Choices=128, 256, 512
 batch_size=16   #Choices=8, 16, 32, 64
-lr=0.01         
+lr=0.0001         
 max_epochs=200
 embed_dim=256
 
