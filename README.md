@@ -6,7 +6,7 @@ Here, we provide the pytorch implementation of the paper: Remote Sensing Image C
 
 For more ore information, please see our published paper at [IEEE TGRS]() or [arxiv](). 
 
-![image-20210228153142126](./images/IGARS_ChangeFormer-method.jpeg)
+![image-20210228153142126](./images/IGARS_ChangeFormer.jpeg)
 
 ## Requirements
 
