@@ -114,8 +114,9 @@ class CDDataset(ImageDataset):
         #  二分类中，前景标注为255
         if self.label_transform == 'norm':
             label = label // 255
-
+        
         [img, img_B], [label] = self.augm.transform([img, img_B], [label], to_tensor=self.to_tensor)
         # print(label.max())
+        
         return {'name': name, 'A': img, 'B': img_B, 'L': label}
 

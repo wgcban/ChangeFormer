@@ -136,7 +136,7 @@ class CDDataAugmentation:
             imgs = [TF.to_tensor(img) for img in imgs]
             labels = [torch.from_numpy(np.array(img, np.uint8)).unsqueeze(dim=0)
                       for img in labels]
-
+            print(imgs[0].max())
             imgs = [TF.normalize(img, mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
                     for img in imgs]
 
