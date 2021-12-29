@@ -11,11 +11,13 @@ For more ore information, please see our published paper at [IEEE TGRS]() or [ar
 ## Requirements
 
 ```
-Python 3.6
-pytorch 1.6.0
-torchvision 0.7.0
-einops  0.3.0
+Python 3.8.0
+pytorch 1.10.1
+torchvision 0.11.2
+einops  0.3.2
 ```
+
+Please see `requirements.txt' for all the other requirements.
 
 ## Installation
 
