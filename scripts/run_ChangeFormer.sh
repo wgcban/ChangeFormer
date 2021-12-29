@@ -18,7 +18,7 @@ embed_dim=256
 net_G=ChangeFormerV6        #Choices=ChangeFormerV1/2/3/4/5
 
 lr_policy=linear
-optimizer=sgd               #Choices: sgd, adam, adamw
+optimizer=adamw               #Choices: sgd, adam, adamw
 loss=ce                     #Choices: ce, fl (Focal Loss), miou
 multi_scale_train=True
 multi_scale_infer=False
