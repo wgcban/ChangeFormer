@@ -1,6 +1,6 @@
 # ChangeFormer: A Transformer Siamese Network for Change Detection (Under review at IGARSS-2022)
 
-[Wele Gedara Chaminda Bandara](), [Vishal M. Patel]()
+[Wele Gedara Chaminda Bandara](https://www.linkedin.com/in/chamindabandara/), [Vishal M. Patel](https://engineering.jhu.edu/vpatel36/sciencex_teams/vishalpatel/)
 
 
 Here, we provide the pytorch implementation of the paper: A Transformer-Based Siamese Network for Change Detection.
