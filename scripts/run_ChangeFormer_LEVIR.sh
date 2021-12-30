@@ -6,20 +6,20 @@ gpus=0
 #Set paths
 checkpoint_root=/media/lidan/ssd2/ChangeFormer/checkpoints
 vis_root=/media/lidan/ssd2/ChangeFormer/vis
-data_name=LEVIR #LEVIR, DSIFN
+data_name=LEVIR
 
 
-img_size=256    #Choices=128, 256, 512
-batch_size=16   #Choices=8, 16, 32, 64
+img_size=256    
+batch_size=16   
 lr=0.0001         
 max_epochs=200
 embed_dim=256
 
-net_G=ChangeFormerV6        #Choices=ChangeFormerV1/2/3/4/5
+net_G=ChangeFormerV6        #ChangeFormerV6 is the finalized verion
 
 lr_policy=linear
-optimizer=adamw               #Choices: sgd, adam, adamw
-loss=ce                     #Choices: ce, fl (Focal Loss), miou
+optimizer=adamw                 #Choices: sgd (set lr to 0.01), adam, adamw
+loss=ce                         #Choices: ce, fl (Focal Loss), miou
 multi_scale_train=True
 multi_scale_infer=False
 shuffle_AB=False
