@@ -11,7 +11,7 @@ data_name=DSIFN
 
 img_size=256    
 batch_size=16   
-lr=0.0001         
+lr=0.00006        
 max_epochs=200
 embed_dim=256
 
