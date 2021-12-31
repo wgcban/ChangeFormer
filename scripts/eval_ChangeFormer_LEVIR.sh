@@ -3,10 +3,10 @@
 gpus=0
 
 data_name=LEVIR
-net_G=ChangeFormerV6
+net_G=ChangeFormerV6 #This is the best version
 split=test
 vis_root=/media/lidan/ssd2/ChangeFormer/vis
-project_name=CD_ChangeFormerV5_LEVIR_b16_lr0.01_sgd_train_test_200_linear_ce_multi_train_False_multi_infer_False_shuffle_AB_False_embed_dim_256
+project_name=
 checkpoints_root=/media/lidan/ssd2/ChangeFormer/checkpoints
 checkpoint_name=best_ckpt.pt
 img_size=256
