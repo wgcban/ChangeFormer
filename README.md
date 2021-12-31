@@ -33,7 +33,7 @@ cd ChangeFormer
 
 We have some samples from the [LEVIR-CD](https://justchenhao.github.io/LEVIR/) dataset in the folder `samples` for a quick start.
 
-Firstly, you can download our ChangeFormer pretrained model——by [DropBox (no signin required)](https://www.dropbox.com/sh/iwwwv9ta1fnu6e9/AABcSRxt5PUggJPJEXGwUs4-a?dl=0). After downloaded the pretrained model, you can put it in `checkpoints/ChangeFormer_LEVIR/`.
+Firstly, you can download our ChangeFormer pretrained model——by [DropBox (no signin required)](https://www.dropbox.com/sh/j1aufnnekp43o2c/AADDEBKRPfzm6JBT2ON_RGjpa?dl=0). After downloaded the pretrained model, you can put it in `checkpoints/ChangeFormer_LEVIR/`.
 
 Then, run a demo to get started as follows:
 
