@@ -10,7 +10,7 @@ class DataConfig:
             self.root_dir = '/media/lidan/ssd2/CDData/LEVIR-CD256/'
         elif data_name == 'DSIFN':
             self.label_transform = "norm"
-            self.root_dir = '/media/lidan/ssd2/CDData/DSIFN/'
+            self.root_dir = '/media/lidan/ssd2/CDData/DSIFN_256/'
         elif data_name == 'quick_start':
             self.root_dir = './samples/'
         else:

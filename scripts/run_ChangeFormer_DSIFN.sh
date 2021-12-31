@@ -9,7 +9,7 @@ vis_root=/media/lidan/ssd2/ChangeFormer/vis
 data_name=DSIFN
 
 
-img_size=512    
+img_size=256    
 batch_size=16   
 lr=0.0001         
 max_epochs=200
