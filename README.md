@@ -25,7 +25,7 @@ Please see `requirements.txt` for all the other requirements.
 Clone this repo:
 
 ```shell
-https://github.com/wgcban/ChangeFormer.git
+git clone https://github.com/wgcban/ChangeFormer.git
 cd ChangeFormer
 ```
 
