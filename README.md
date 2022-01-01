@@ -5,7 +5,7 @@
 
 Here, we provide the pytorch implementation of the paper: A Transformer-Based Siamese Network for Change Detection.
 
-For more ore information, please see our paper at [arxiv](). 
+For more information, please see our paper at [arxiv](). 
 
 ![image-20210228153142126](./images/IGARS_ChangeFormer.jpeg)
 
