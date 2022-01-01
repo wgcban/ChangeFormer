@@ -29,21 +29,38 @@ https://github.com/wgcban/ChangeFormer.git
 cd ChangeFormer
 ```
 
-## Quick Start
+## Quick Start on LEVIR dataset
 
-We have some samples from the [LEVIR-CD](https://justchenhao.github.io/LEVIR/) dataset in the folder `samples` for a quick start.
+We have some samples from the [LEVIR-CD](https://justchenhao.github.io/LEVIR/) dataset in the folder `samples_LEVIR` for a quick start.
 
-Firstly, you can download our ChangeFormer pretrained model——by [DropBox (no signin required)](https://www.dropbox.com/sh/j1aufnnekp43o2c/AADDEBKRPfzm6JBT2ON_RGjpa?dl=0). After downloaded the pretrained model, you can put it in `checkpoints/ChangeFormer_LEVIR/`.
+Firstly, you can download our ChangeFormerV6 pretrained model——by [DropBox (no signin required)](https://www.dropbox.com/sh/j1aufnnekp43o2c/AADDEBKRPfzm6JBT2ON_RGjpa?dl=0). After downloaded the pretrained model, you can put it in `checkpoints/ChangeFormer_LEVIR/`.
 
 Then, run a demo to get started as follows:
 
 ```python
-python demo.py 
+python demo_LEVIR.py
 ```
 
-After that, you can find the prediction results in `samples/predict`.
+After that, you can find the prediction results in `samples/predict_LEVIR`.
 
-## Train
+
+## Quick Start on DSFIN dataset
+
+We have some samples from the [DSFIN-CD](https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images/tree/master/dataset) dataset in the folder `samples_DSFIN` for a quick start.
+
+Firstly, you can download our ChangeFormerV6 pretrained model——by [DropBox (no signin required)](https://www.dropbox.com/sh/j1aufnnekp43o2c/AADDEBKRPfzm6JBT2ON_RGjpa?dl=0). After downloaded the pretrained model, you can put it in `checkpoints/ChangeFormer_LEVIR/`.
+
+Then, run a demo to get started as follows:
+
+```python
+python demo_DSFIN.py
+```
+
+After that, you can find the prediction results in `samples/predict_DSFIN`.
+
+
+
+## Train on LEVIR-CD
 
 You can find the training script `run_ChangeFormer_LEVIR.sh` in the folder `scripts`. You can run the script file by `sh scripts/run_ChangeFormer_LEVIR.sh` in the command environment.
 
@@ -87,7 +104,11 @@ project_name=CD_${net_G}_${data_name}_b${batch_size}_lr${lr}_${optimizer}_${spli
 CUDA_VISIBLE_DEVICES=1 python main_cd.py --img_size ${img_size} --loss ${loss} --checkpoint_root ${checkpoint_root} --vis_root ${vis_root} --lr_policy ${lr_policy} --optimizer ${optimizer} --pretrain ${pretrain} --split ${split} --split_val ${split_val} --net_G ${net_G} --multi_scale_train ${multi_scale_train} --multi_scale_infer ${multi_scale_infer} --gpu_ids ${gpus} --max_epochs ${max_epochs} --project_name ${project_name} --batch_size ${batch_size} --shuffle_AB ${shuffle_AB} --data_name ${data_name}  --lr ${lr} --embed_dim ${embed_dim}
 ```
 
-## Evaluate
+## Train on DSFIN-CD
+
+Follow the similar procedure mentioned for LEVIR-CD. Use `run_ChangeFormer_DSFIN.sh` in `scripts` folder to train on DSFIN-CD.
+
+## Evaluate on LEVIR
 
 You can find the evaluation script `eval_ChangeFormer_LEVIR.sh` in the folder `scripts`. You can run the script file by `sh scripts/eval_ChangeFormer_LEVIR.sh` in the command environment.
 
@@ -110,6 +131,10 @@ embed_dim=256 #Make sure to change the embedding dim (best and default = 256)
 
 CUDA_VISIBLE_DEVICES=0 python eval_cd.py --split ${split} --net_G ${net_G} --embed_dim ${embed_dim} --img_size ${img_size} --vis_root ${vis_root} --checkpoints_root ${checkpoints_root} --checkpoint_name ${checkpoint_name} --gpu_ids ${gpus} --project_name ${project_name} --data_name ${data_name}
 ```
+
+## Evaluate on LEVIR
+
+Follow the same evaluation procedure mentioned for LEVIR-CD. You can find the evaluation script `eval_ChangeFormer_DSFIN.sh` in the folder `scripts`. You can run the script file by `sh scripts/eval_ChangeFormer_DSFIN.sh` in the command environment.
 
 ## Dataset Preparation
 
