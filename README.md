@@ -48,7 +48,7 @@ After that, you can find the prediction results in `samples/predict_LEVIR`.
 
 We have some samples from the [DSFIN-CD](https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images/tree/master/dataset) dataset in the folder `samples_DSFIN` for a quick start.
 
-Firstly, you can download our ChangeFormerV6 pretrained model——by [DropBox](https://www.dropbox.com/sh/xoswrsu9n4ypr5h/AAAmUOE-DTq59fX-tE2TwPzKa?dl=0). After downloaded the pretrained model, you can put it in `checkpoints/ChangeFormer_LEVIR/`.
+Firstly, you can download our ChangeFormerV6 pretrained model——by [DropBox](https://www.dropbox.com/sh/yrdbmkvhbpxuabw/AADHQIAd12tFTvBbgbh_z_BGa?dl=0). After downloaded the pretrained model, you can put it in `checkpoints/ChangeFormer_LEVIR/`.
 
 Then, run a demo to get started as follows:
 
