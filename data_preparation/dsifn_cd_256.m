@@ -1,3 +1,28 @@
+%Dataset preparation code for DSFIN dataset (MATLAB)
+%Download DSFIN dataset here: https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images/tree/master/dataset
+%This code generate 256x256 image partches required for the train/val/test
+%Please create folders according to following format.
+%DSIFN_256
+%------(train)
+%       |---> A
+%       |---> B
+%       |---> label
+%------(val)
+%       |---> A
+%       |---> B
+%       |---> label
+%------(test)
+%       |---> A
+%       |---> B
+%       |---> label
+%Then run this code
+%Then copy all images in train-A, val-A, test-A to a folder name A
+%Then copy all images in train-B, val-B, test-B to a folder name B
+%Then copy all images in train-label, val-label, test-label to a folder name label
+
+
+
+
 clear all;
 close all;
 clc;
