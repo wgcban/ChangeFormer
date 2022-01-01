@@ -54,7 +54,7 @@ class CDEvaluator():
         img_in2 = batch['B'].to(self.device)
         self.shape_h = img_in1.shape[-2]
         self.shape_w = img_in1.shape[-1]
-        self.G_pred = self.net_G(img_in1, img_in2)
+        self.G_pred = self.net_G(img_in1, img_in2)[-1]
         return self._visualize_pred()
 
     def eval(self):
