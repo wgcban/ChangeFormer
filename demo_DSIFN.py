@@ -21,10 +21,10 @@ def get_args():
     # args
     # ------------
     parser = ArgumentParser()
-    parser.add_argument('--project_name', default='ChangeFormer_DSIFN', type=str)
+    parser.add_argument('--project_name', default='CD_ChangeFormerV6_DSIFN_b16_lr0.00006_adamw_train_test_200_linear_ce_multi_train_True_multi_infer_False_shuffle_AB_False_embed_dim_256', type=str)
     parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
-    parser.add_argument('--checkpoint_root', default='checkpoints', type=str)
-    parser.add_argument('--output_folder', default='samples_DSIFN/predict', type=str)
+    parser.add_argument('--checkpoint_root', default='/media/lidan/ssd2/ChangeFormer/checkpoints/', type=str)
+    parser.add_argument('--output_folder', default='samples_DSIFN/predict_ChangeFormerV6', type=str)
 
     # data
     parser.add_argument('--num_workers', default=0, type=int)
@@ -39,7 +39,7 @@ def get_args():
     parser.add_argument('--n_class', default=2, type=int)
     parser.add_argument('--embed_dim', default=256, type=int)
     parser.add_argument('--net_G', default='ChangeFormerV6', type=str,
-                        help='ChangeFormerV6 | base_resnet18 | base_transformer_pos_s4_dd8 | base_transformer_pos_s4_dd8_dedim8|')
+                        help='ChangeFormerV6 | CD_SiamUnet_diff | SiamUnet_conc | Unet | DTCDSCN | base_resnet18 | base_transformer_pos_s4_dd8 | base_transformer_pos_s4_dd8_dedim8|')
     parser.add_argument('--checkpoint_name', default='best_ckpt.pt', type=str)
 
     args = parser.parse_args()
