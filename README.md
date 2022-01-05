@@ -5,7 +5,7 @@
 
 Here, we provide the pytorch implementation of the paper: A Transformer-Based Siamese Network for Change Detection.
 
-For more information, please see our paper at [arxiv](). 
+For more information, please see our paper at [arxiv](https://arxiv.org/pdf/2201.01293.pdf). 
 
 ![image-20210228153142126](./images/IGARS_ChangeFormer.jpeg)
 
@@ -175,7 +175,13 @@ Code is released for non-commercial and research purposes **only**. For commerci
 If you use this code for your research, please cite our paper:
 
 ```
-@Article{
+@misc{bandara2022transformerbased,
+      title={A Transformer-Based Siamese Network for Change Detection}, 
+      author={Wele Gedara Chaminda Bandara and Vishal M. Patel},
+      year={2022},
+      eprint={2201.01293},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
 }
 ```
 
