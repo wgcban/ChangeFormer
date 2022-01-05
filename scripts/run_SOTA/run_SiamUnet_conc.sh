@@ -12,7 +12,7 @@ gpus=0
 #Set paths
 checkpoint_root=/media/lidan/ssd2/ChangeFormer/checkpoints
 vis_root=/media/lidan/ssd2/ChangeFormer/vis
-data_name=LEVIR #LEVIR, DSIFN
+data_name=DSIFN #LEVIR, DSIFN
 
 
 img_size=256                #Choices=128, 256, 512
