@@ -7,7 +7,11 @@ Here, we provide the pytorch implementation of the paper: A Transformer-Based Si
 
 For more information, please see our paper at [arxiv](https://arxiv.org/pdf/2201.01293.pdf). 
 
+## Network Architecture
 ![image-20210228153142126](./images/IGARS_ChangeFormer.jpeg)
+
+## Qualitative Results on LEVIR-CD and DSFIN-CD
+![image-20210228153142126](./images/IGARS_ChangeFormer-LEVIR_DSFIN.jpeg)
 
 ## Requirements
 
