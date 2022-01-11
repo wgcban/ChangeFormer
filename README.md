@@ -10,7 +10,7 @@ For more information, please see our paper at [arxiv](https://arxiv.org/pdf/2201
 ## Network Architecture
 ![image-20210228153142126](./images/IGARS_ChangeFormer.jpeg)
 
-## Qualitative Results on LEVIR-CD and DSFIN-CD
+## Qualitative Results on LEVIR-CD and DSIFN-CD
 ![image-20210228153142126](./images/IGARS_ChangeFormer-LEVIR_DSFIN.jpeg)
 
 ## Requirements
@@ -50,7 +50,7 @@ After that, you can find the prediction results in `samples/predict_LEVIR`.
 
 ## Quick Start on DSFIN dataset
 
-We have some samples from the [DSFIN-CD](https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images/tree/master/dataset) dataset in the folder `samples_DSFIN` for a quick start.
+We have some samples from the [DSIFN-CD](https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images/tree/master/dataset) dataset in the folder `samples_DSFIN` for a quick start.
 
 Firstly, you can download our ChangeFormerV6 pretrained model——by [DropBox](https://www.dropbox.com/sh/yrdbmkvhbpxuabw/AADHQIAd12tFTvBbgbh_z_BGa?dl=0). After downloaded the pretrained model, you can put it in `checkpoints/ChangeFormer_LEVIR/`.
 
@@ -108,9 +108,9 @@ project_name=CD_${net_G}_${data_name}_b${batch_size}_lr${lr}_${optimizer}_${spli
 CUDA_VISIBLE_DEVICES=1 python main_cd.py --img_size ${img_size} --loss ${loss} --checkpoint_root ${checkpoint_root} --vis_root ${vis_root} --lr_policy ${lr_policy} --optimizer ${optimizer} --pretrain ${pretrain} --split ${split} --split_val ${split_val} --net_G ${net_G} --multi_scale_train ${multi_scale_train} --multi_scale_infer ${multi_scale_infer} --gpu_ids ${gpus} --max_epochs ${max_epochs} --project_name ${project_name} --batch_size ${batch_size} --shuffle_AB ${shuffle_AB} --data_name ${data_name}  --lr ${lr} --embed_dim ${embed_dim}
 ```
 
-## Train on DSFIN-CD
+## Train on DSIFN-CD
 
-Follow the similar procedure mentioned for LEVIR-CD. Use `run_ChangeFormer_DSFIN.sh` in `scripts` folder to train on DSFIN-CD.
+Follow the similar procedure mentioned for LEVIR-CD. Use `run_ChangeFormer_DSFIN.sh` in `scripts` folder to train on DSIFN-CD.
 
 ## Evaluate on LEVIR
 
