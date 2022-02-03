@@ -13,7 +13,7 @@ For more information, please see our paper at [arxiv](https://arxiv.org/pdf/2201
 ## Network Architecture
 ![image-20210228153142126](./images/IGARS_ChangeFormer.jpeg)
 
-## Qualitative Results on LEVIR-CD and DSIFN-CD
+## Quantitative & Qualitative Results on LEVIR-CD and DSIFN-CD
 ![image-20210228153142126](./images/IGARS_ChangeFormer-LEVIR_DSFIN_both.png)
 
 ## Requirements
