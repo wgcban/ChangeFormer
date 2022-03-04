@@ -26,6 +26,11 @@ einops  0.3.2
 ```
 
 Please see `requirements.txt` for all the other requirements.
+You can create a virtual ``conda`` environment named ``ChangeFormer`` with the following cmd:
+``
+conda create --name ChangeFormer --file requirements.txt
+conda activate ChangeFormer
+``
 
 ## Installation
 
