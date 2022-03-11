@@ -79,7 +79,7 @@ When we initialy train our ChangeFormer, we initialized some parameters of the n
 
 You can download the pre-trained model (here)[https://www.dropbox.com/sh/4uh7y4a3r77asvo/AACHUnArhg6Cfiw5P3z-L2ACa?dl=0].
 
-Then, update the path to the pre-trained model by updating the ``path``()  argument in the ``run_ChangeFormer_LEVIR.sh``.
+Then, update the path to the pre-trained model by updating the ``path``(in code pretrain=/media/lidan/ssd2/ChangeFormer/pretrained_segformer/segformer.b2.512x512.ade.160k.pth )  argument in the ``run_ChangeFormer_LEVIR.sh``.
 
 You can find the training script `run_ChangeFormer_LEVIR.sh` in the folder `scripts`. You can run the script file by `sh scripts/run_ChangeFormer_LEVIR.sh` in the command environment.
 
