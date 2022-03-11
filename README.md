@@ -75,6 +75,12 @@ After that, you can find the prediction results in `samples/predict_DSIFN`.
 
 ## Train on LEVIR-CD
 
+When we initialy train our ChangeFormer, we initialized some parameters of the network with a model pre-trained on the RGB segmentation (ADE 160k dataset) to get faster convergence.
+
+You can download the pre-trained model (here)[https://www.dropbox.com/sh/4uh7y4a3r77asvo/AACHUnArhg6Cfiw5P3z-L2ACa?dl=0].
+
+Then, update the path to the pre-trained model by updating the ``path``()  argument in the ``run_ChangeFormer_LEVIR.sh``.
+
 You can find the training script `run_ChangeFormer_LEVIR.sh` in the folder `scripts`. You can run the script file by `sh scripts/run_ChangeFormer_LEVIR.sh` in the command environment.
 
 The detailed script file `run_ChangeFormer_LEVIR.sh` is as follows:
