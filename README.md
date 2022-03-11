@@ -81,7 +81,7 @@ You can download the pre-trained model [here](https://www.dropbox.com/sh/4uh7y4a
 
 Then, update the path to the pre-trained model by updating the ``path`` argument in the ``run_ChangeFormer_LEVIR.sh``.
 Here:
-https://github.com/wgcban/ChangeFormer/blob/62337bdf5e2dcddb625ea81d1b8404b10e7e947d/scripts/run_ChangeFormer_LEVIR.sh#L28] 
+https://github.com/wgcban/ChangeFormer/blob/62337bdf5e2dcddb625ea81d1b8404b10e7e947d/scripts/run_ChangeFormer_LEVIR.sh#L28
 
 You can find the training script `run_ChangeFormer_LEVIR.sh` in the folder `scripts`. You can run the script file by `sh scripts/run_ChangeFormer_LEVIR.sh` in the command environment.
 
