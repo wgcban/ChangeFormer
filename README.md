@@ -179,13 +179,15 @@ Change detection data set with pixel-level binary labels；
 
 `list`: contains `train.txt, val.txt and test.txt`, each file records the image names (XXX.png) in the change detection dataset.
 
-### Data Download 
+### Data Processed Datsets 
 
-LEVIR-CD: https://justchenhao.github.io/LEVIR/
+You can download the processed LEVIR-CD and DSIFN-CD datasets by the DropBox through the following here:
 
-WHU-CD: https://study.rsgis.whu.edu.cn/pages/download/building_dataset.html
+- LEVIR-CD-256: [click here to download](https://www.dropbox.com/sh/lnjxpflvgjijwoj/AAAgWr3xgOjqtTWPVpbLVcfNa?dl=0)
+- DSIFN-CD-256: [click here to download](https://www.dropbox.com/sh/i54h8kkpgar1s07/AACK5_jLGS3cP9ocgOMEUJcNa?dl=0)**
 
-DSIFN-CD: https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images/tree/master/dataset
+For your reference, I have also attached link to original LEVIR-CD and DSIFN-CD here: [LEVIR-CD](https://justchenhao.github.io/LEVIR/ DSIFN-CD) and [DSIFN-CD](https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images/tree/master/dataset)
+
 
 ## License
 
