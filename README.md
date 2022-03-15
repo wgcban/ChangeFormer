@@ -179,7 +179,7 @@ Change detection data set with pixel-level binary labels；
 
 `list`: contains `train.txt, val.txt and test.txt`, each file records the image names (XXX.png) in the change detection dataset.
 
-### Data Processed Datsets 
+### Links to download processed datsets used for train/val/test
 
 You can download the processed LEVIR-CD and DSIFN-CD datasets by the DropBox through the following here:
 
