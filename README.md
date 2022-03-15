@@ -186,7 +186,7 @@ You can download the processed LEVIR-CD and DSIFN-CD datasets by the DropBox thr
 - LEVIR-CD-256: [click here to download](https://www.dropbox.com/sh/lnjxpflvgjijwoj/AAAgWr3xgOjqtTWPVpbLVcfNa?dl=0)
 - DSIFN-CD-256: [click here to download](https://www.dropbox.com/sh/i54h8kkpgar1s07/AACK5_jLGS3cP9ocgOMEUJcNa?dl=0)
 
-For your reference, I have also attached the inks to original LEVIR-CD and DSIFN-CD here: [LEVIR-CD](https://justchenhao.github.io/LEVIR/ DSIFN-CD) and [DSIFN-CD](https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images/tree/master/dataset)
+For your reference, I have also attached the inks to original LEVIR-CD and DSIFN-CD here: [LEVIR-CD](https://justchenhao.github.io/LEVIR/) and [DSIFN-CD](https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images/tree/master/dataset)
 
 
 ## License
