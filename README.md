@@ -2,7 +2,7 @@
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/a-transformer-based-siamese-network-for/change-detection-on-levir-cd)](https://paperswithcode.com/sota/change-detection-on-levir-cd?p=a-transformer-based-siamese-network-for)
 # ChangeFormer: A Transformer-Based Siamese Network for Change Detection 
 
-Accepted for publication at [IGARSS-22](https://www.igarss2022.org/default.php), Kuala Lumpur, Malaysia.
+**Accepted for publication at [IGARSS-22](https://www.igarss2022.org/default.php), Kuala Lumpur, Malaysia.**
 
 
 [Wele Gedara Chaminda Bandara](https://www.wgcban.com/), and [Vishal M. Patel](https://engineering.jhu.edu/vpatel36/sciencex_teams/vishalpatel/)
