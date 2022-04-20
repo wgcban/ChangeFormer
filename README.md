@@ -5,17 +5,17 @@
 
 [Wele Gedara Chaminda Bandara](https://www.wgcban.com/), and [Vishal M. Patel](https://engineering.jhu.edu/vpatel36/sciencex_teams/vishalpatel/)
 
-**Accepted for publication at [IGARSS-22](https://www.igarss2022.org/default.php), Kuala Lumpur, Malaysia.**
+:notebook_with_decorative_cover: **Accepted for publication at [IGARSS-22](https://www.igarss2022.org/default.php), Kuala Lumpur, Malaysia.**
 
 
 Here, we provide the pytorch implementation of the paper: A Transformer-Based Siamese Network for Change Detection.
 
-For more information, please see our paper at [arxiv](https://arxiv.org/pdf/2201.01293.pdf). 
+:notebook_with_decorative_cover: For more information, please see our paper at [arxiv](https://arxiv.org/pdf/2201.01293.pdf). 
 
-## Network Architecture
+## :speech_balloon: Network Architecture
 ![image-20210228153142126](./images/IGARS_ChangeFormer.jpeg)
 
-## Quantitative & Qualitative Results on LEVIR-CD and DSIFN-CD
+## :speech_balloon: Quantitative & Qualitative Results on LEVIR-CD and DSIFN-CD
 ![image-20210228153142126](./images/IGARS_ChangeFormer-LEVIR_DSFIN_both.png)
 
 ## :speech_balloon: Requirements
