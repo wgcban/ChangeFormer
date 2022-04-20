@@ -18,7 +18,7 @@ For more information, please see our paper at [arxiv](https://arxiv.org/pdf/2201
 ## Quantitative & Qualitative Results on LEVIR-CD and DSIFN-CD
 ![image-20210228153142126](./images/IGARS_ChangeFormer-LEVIR_DSFIN_both.png)
 
-## Requirements
+## :speech_balloon: Requirements
 
 ```
 Python 3.8.0
@@ -35,7 +35,7 @@ conda create --name ChangeFormer --file requirements.txt
 conda activate ChangeFormer
 ```
 
-## Installation
+## :speech_balloon: Installation
 
 Clone this repo:
 
@@ -44,7 +44,7 @@ git clone https://github.com/wgcban/ChangeFormer.git
 cd ChangeFormer
 ```
 
-## Quick Start on LEVIR dataset
+## :speech_balloon: Quick Start on LEVIR dataset
 
 We have some samples from the [LEVIR-CD](https://justchenhao.github.io/LEVIR/) dataset in the folder `samples_LEVIR` for a quick start.
 
@@ -59,7 +59,7 @@ python demo_LEVIR.py
 After that, you can find the prediction results in `samples/predict_LEVIR`.
 
 
-## Quick Start on DSIFN dataset
+## :speech_balloon: Quick Start on DSIFN dataset
 
 We have some samples from the [DSIFN-CD](https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images/tree/master/dataset) dataset in the folder `samples_DSIFN` for a quick start.
 
@@ -75,7 +75,7 @@ After that, you can find the prediction results in `samples/predict_DSIFN`.
 
 
 
-## Train on LEVIR-CD
+## :speech_balloon: Train on LEVIR-CD
 
 When we initialy train our ChangeFormer, we initialized some parameters of the network with a model pre-trained on the RGB segmentation (ADE 160k dataset) to get faster convergence.
 
@@ -127,11 +127,11 @@ project_name=CD_${net_G}_${data_name}_b${batch_size}_lr${lr}_${optimizer}_${spli
 CUDA_VISIBLE_DEVICES=1 python main_cd.py --img_size ${img_size} --loss ${loss} --checkpoint_root ${checkpoint_root} --vis_root ${vis_root} --lr_policy ${lr_policy} --optimizer ${optimizer} --pretrain ${pretrain} --split ${split} --split_val ${split_val} --net_G ${net_G} --multi_scale_train ${multi_scale_train} --multi_scale_infer ${multi_scale_infer} --gpu_ids ${gpus} --max_epochs ${max_epochs} --project_name ${project_name} --batch_size ${batch_size} --shuffle_AB ${shuffle_AB} --data_name ${data_name}  --lr ${lr} --embed_dim ${embed_dim}
 ```
 
-## Train on DSIFN-CD
+## :speech_balloon: Train on DSIFN-CD
 
 Follow the similar procedure mentioned for LEVIR-CD. Use `run_ChangeFormer_DSIFN.sh` in `scripts` folder to train on DSIFN-CD.
 
-## Evaluate on LEVIR
+## :speech_balloon: Evaluate on LEVIR
 
 You can find the evaluation script `eval_ChangeFormer_LEVIR.sh` in the folder `scripts`. You can run the script file by `sh scripts/eval_ChangeFormer_LEVIR.sh` in the command environment.
 
@@ -155,13 +155,13 @@ embed_dim=256 #Make sure to change the embedding dim (best and default = 256)
 CUDA_VISIBLE_DEVICES=0 python eval_cd.py --split ${split} --net_G ${net_G} --embed_dim ${embed_dim} --img_size ${img_size} --vis_root ${vis_root} --checkpoints_root ${checkpoints_root} --checkpoint_name ${checkpoint_name} --gpu_ids ${gpus} --project_name ${project_name} --data_name ${data_name}
 ```
 
-## Evaluate on DSIFN
+## :speech_balloon: Evaluate on DSIFN
 
 Follow the same evaluation procedure mentioned for LEVIR-CD. You can find the evaluation script `eval_ChangeFormer_DSFIN.sh` in the folder `scripts`. You can run the script file by `sh scripts/eval_ChangeFormer_DSIFN.sh` in the command environment.
 
-## Dataset Preparation
+## :speech_balloon: Dataset Preparation
 
-### Data structure
+### :point_right: Data structure
 
 ```
 """
@@ -181,7 +181,7 @@ Change detection data set with pixel-level binary labels；
 
 `list`: contains `train.txt, val.txt and test.txt`, each file records the image names (XXX.png) in the change detection dataset.
 
-### Links to download processed datsets used for train/val/test
+### :point_right: Links to download processed datsets used for train/val/test
 
 You can download the processed LEVIR-CD and DSIFN-CD datasets by the DropBox through the following here:
 
@@ -191,11 +191,11 @@ You can download the processed LEVIR-CD and DSIFN-CD datasets by the DropBox thr
 For your reference, I have also attached the inks to original LEVIR-CD and DSIFN-CD here: [LEVIR-CD](https://justchenhao.github.io/LEVIR/) and [DSIFN-CD](https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images/tree/master/dataset).
 
 
-## License
+## :speech_balloon: License
 
 Code is released for non-commercial and research purposes **only**. For commercial purposes, please contact the authors.
 
-## Citation
+## :speech_balloon: Citation
 
 If you use this code for your research, please cite our paper:
 
@@ -210,7 +210,7 @@ If you use this code for your research, please cite our paper:
 }
 ```
 
-## References
+## :speech_balloon: References
 Appreciate the work from the following repositories:
 
 - https://github.com/justchenhao/BIT_CD (Our ChangeFormer is implemented on the code provided in this repository)
