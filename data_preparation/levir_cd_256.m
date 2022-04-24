@@ -50,7 +50,7 @@ for i=1:1:length(imgs_name)
     for j=1:4
         for k=1:4
             patch = temp((j-1)*256+1: j*256, (k-1)*256+1: k*256, :);
-            imwrite(patch, strcat('LEVIR-CD256/train/B/', img_file_name(1:end-4), '_', num2str(j+k-1), '.png'));
+            imwrite(patch, strcat('LEVIR-CD256/train/B/', img_file_name(1:end-4), '_', num2str(c), '.png'));
             c=c+1;
         end
     end
@@ -66,7 +66,7 @@ for i=1:1:length(imgs_name)
     for j=1:4
         for k=1:4
             patch = temp((j-1)*256+1: j*256, (k-1)*256+1: k*256, :);
-            imwrite(patch, strcat('LEVIR-CD256/train/label/', img_file_name(1:end-4), '_', num2str(j+k-1), '.png'));
+            imwrite(patch, strcat('LEVIR-CD256/train/label/', img_file_name(1:end-4), '_', num2str(c), '.png'));
             c=c+1;
         end
     end
@@ -83,7 +83,7 @@ for i=1:1:length(imgs_name)
     for j=1:4
         for k=1:4
             patch = temp((j-1)*256+1: j*256, (k-1)*256+1: k*256, :);
-            imwrite(patch, strcat('LEVIR-CD256/test/A/', img_file_name(1:end-4), '_', num2str(j+k-1), '.png'));
+            imwrite(patch, strcat('LEVIR-CD256/test/A/', img_file_name(1:end-4), '_', num2str(c), '.png'));
             c=c+1;
         end
     end
@@ -99,7 +99,7 @@ for i=1:1:length(imgs_name)
     for j=1:4
         for k=1:4
             patch = temp((j-1)*256+1: j*256, (k-1)*256+1: k*256, :);
-            imwrite(patch, strcat('LEVIR-CD256/test/B/', img_file_name(1:end-4), '_', num2str(j+k-1), '.png'));
+            imwrite(patch, strcat('LEVIR-CD256/test/B/', img_file_name(1:end-4), '_', num2str(c), '.png'));
             c=c+1;
         end
     end
@@ -115,7 +115,7 @@ for i=1:1:length(imgs_name)
     for j=1:4
         for k=1:4
             patch = temp((j-1)*256+1: j*256, (k-1)*256+1: k*256, :);
-            imwrite(patch, strcat('LEVIR-CD256/test/label/', img_file_name(1:end-4), '_', num2str(j+k-1), '.png'));
+            imwrite(patch, strcat('LEVIR-CD256/test/label/', img_file_name(1:end-4), '_', num2str(c), '.png'));
             c=c+1;
         end
     end
@@ -133,7 +133,7 @@ for i=1:1:length(imgs_name)
     for j=1:4
         for k=1:4
             patch = temp((j-1)*256+1: j*256, (k-1)*256+1: k*256, :);
-            imwrite(patch, strcat('LEVIR-CD256/val/A/', img_file_name(1:end-4), '_', num2str(j+k-1), '.png'));
+            imwrite(patch, strcat('LEVIR-CD256/val/A/', img_file_name(1:end-4), '_', num2str(c), '.png'));
             c=c+1;
         end
     end
@@ -149,7 +149,7 @@ for i=1:1:length(imgs_name)
     for j=1:4
         for k=1:4
             patch = temp((j-1)*256+1: j*256, (k-1)*256+1: k*256, :);
-            imwrite(patch, strcat('LEVIR-CD256/val/B/', img_file_name(1:end-4), '_', num2str(j+k-1), '.png'));
+            imwrite(patch, strcat('LEVIR-CD256/val/B/', img_file_name(1:end-4), '_', num2str(c), '.png'));
             c=c+1;
         end
     end
@@ -165,7 +165,7 @@ for i=1:1:length(imgs_name)
     for j=1:4
         for k=1:4
             patch = temp((j-1)*256+1: j*256, (k-1)*256+1: k*256, :);
-            imwrite(patch, strcat('LEVIR-CD256/val/label/', img_file_name(1:end-4), '_', num2str(j+k-1), '.png'));
+            imwrite(patch, strcat('LEVIR-CD256/val/label/', img_file_name(1:end-4), '_', num2str(c), '.png'));
             c=c+1;
         end
     end
