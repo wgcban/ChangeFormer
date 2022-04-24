@@ -1,8 +1,8 @@
 %Dataset preparation code for DSFIN dataset (MATLAB)
-%Download DSFIN dataset here: https://justchenhao.github.io/LEVIR/
+%Download LEVIR dataset here: https://www.dropbox.com/s/h9jl2ygznsaeg5d/LEVIR-CD-256.zip
 %This code generate 256x256 image partches required for the train/val/test
 %Please create folders according to following format.
-%DSIFN_256
+%DSIFN-CD-256
 %------(train)
 %       |---> A
 %       |---> B
