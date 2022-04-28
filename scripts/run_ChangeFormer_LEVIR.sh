@@ -25,7 +25,7 @@ multi_scale_infer=False
 shuffle_AB=False
 
 #Initializing from pretrained weights
-pretrain=/media/lidan/ssd2/ChangeFormer/pretrained_segformer/segformer.b2.512x512.ade.160k.pth
+pretrain=pretrained_changeformer/pretrained_changeformer.pt
 
 #Train and Validation splits
 split=train         #trainval
