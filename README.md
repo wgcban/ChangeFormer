@@ -3,14 +3,14 @@
 # ChangeFormer: A Transformer-Based Siamese Network for Change Detection 
 
 
-[`Wele Gedara Chaminda Bandara`](https://www.wgcban.com/), and [Vishal M. Patel](https://engineering.jhu.edu/vpatel36/sciencex_teams/vishalpatel/)
+[`Wele Gedara Chaminda Bandara`](https://www.wgcban.com/), and [`Vishal M. Patel`](https://engineering.jhu.edu/vpatel36/sciencex_teams/vishalpatel/)
 
-:notebook_with_decorative_cover: **Accepted for publication at [IGARSS-22](https://www.igarss2022.org/default.php), Kuala Lumpur, Malaysia.**
+:notebook_with_decorative_cover: **Accepted for publication at [`IGARSS-22`](https://www.igarss2022.org/default.php), Kuala Lumpur, Malaysia.**
 
 
 Here, we provide the pytorch implementation of the paper: A Transformer-Based Siamese Network for Change Detection.
 
-:notebook_with_decorative_cover: For more information, please see our paper at [arxiv](https://arxiv.org/pdf/2201.01293.pdf). 
+:notebook_with_decorative_cover: For more information, please see our paper at [`arxiv`](https://arxiv.org/pdf/2201.01293.pdf). 
 
 ## :speech_balloon: Network Architecture
 ![image-20210228153142126](./images/IGARS_ChangeFormer.jpeg)
@@ -48,7 +48,7 @@ cd ChangeFormer
 
 We have some samples from the [LEVIR-CD](https://justchenhao.github.io/LEVIR/) dataset in the folder `samples_LEVIR` for a quick start.
 
-Firstly, you can download our ChangeFormerV6 pretrained model——by [DropBox](https://www.dropbox.com/sh/xoswrsu9n4ypr5h/AAAmUOE-DTq59fX-tE2TwPzKa?dl=0) or [Github](https://github.com/wgcban/ChangeFormer/releases/download/v0.1.0/CD_ChangeFormerV6_LEVIR_b16_lr0.0001_adamw_train_test_200_linear_ce_multi_train_True_multi_infer_False_shuffle_AB_False_embed_dim_256.zip). After downloaded the pretrained model, you can put it in `checkpoints/ChangeFormer_LEVIR/`.
+Firstly, you can download our ChangeFormerV6 pretrained model——by [`DropBox`](https://www.dropbox.com/sh/xoswrsu9n4ypr5h/AAAmUOE-DTq59fX-tE2TwPzKa?dl=0) or [`Github`](https://github.com/wgcban/ChangeFormer/releases/download/v0.1.0/CD_ChangeFormerV6_LEVIR_b16_lr0.0001_adamw_train_test_200_linear_ce_multi_train_True_multi_infer_False_shuffle_AB_False_embed_dim_256.zip). After downloaded the pretrained model, you can put it in `checkpoints/ChangeFormer_LEVIR/`.
 
 Then, run a demo to get started as follows:
 
@@ -61,9 +61,9 @@ After that, you can find the prediction results in `samples/predict_LEVIR`.
 
 ## :speech_balloon: Quick Start on DSIFN dataset
 
-We have some samples from the [DSIFN-CD](https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images/tree/master/dataset) dataset in the folder `samples_DSIFN` for a quick start.
+We have some samples from the [`DSIFN-CD`](https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images/tree/master/dataset) dataset in the folder `samples_DSIFN` for a quick start.
 
-Firstly, you can download our ChangeFormerV6 pretrained model——by [DropBox](https://www.dropbox.com/sh/yrdbmkvhbpxuabw/AADHQIAd12tFTvBbgbh_z_BGa?dl=0) or [Github](https://github.com/wgcban/ChangeFormer/releases/download/v0.1.0/CD_ChangeFormerV6_DSIFN_b16_lr0.00006_adamw_train_test_200_linear_ce_multi_train_True_multi_infer_False_shuffle_AB_False_embed_dim_256.zip). After downloaded the pretrained model, you can put it in `checkpoints/ChangeFormer_DSIFN/`.
+Firstly, you can download our ChangeFormerV6 pretrained model——by [`DropBox`](https://www.dropbox.com/sh/yrdbmkvhbpxuabw/AADHQIAd12tFTvBbgbh_z_BGa?dl=0) or [`Github`](https://github.com/wgcban/ChangeFormer/releases/download/v0.1.0/CD_ChangeFormerV6_DSIFN_b16_lr0.00006_adamw_train_test_200_linear_ce_multi_train_True_multi_infer_False_shuffle_AB_False_embed_dim_256.zip). After downloaded the pretrained model, you can put it in `checkpoints/ChangeFormer_DSIFN/`.
 
 Then, run a demo to get started as follows:
 
@@ -79,7 +79,7 @@ After that, you can find the prediction results in `samples/predict_DSIFN`.
 
 When we initialy train our ChangeFormer, we initialized some parameters of the network with a model pre-trained on the RGB segmentation (ADE 160k dataset) to get faster convergence.
 
-You can download the pre-trained model [here](https://www.dropbox.com/sh/4uh7y4a3r77asvo/AACHUnArhg6Cfiw5P3z-L2ACa?dl=00).
+You can download the pre-trained model [`here`](https://www.dropbox.com/sh/4uh7y4a3r77asvo/AACHUnArhg6Cfiw5P3z-L2ACa?dl=00).
 
 Then, update the path to the pre-trained model by updating the ``path`` argument in the ``run_ChangeFormer_LEVIR.sh``.
 Here:
@@ -185,8 +185,8 @@ Change detection data set with pixel-level binary labels；
 
 You can download the processed LEVIR-CD and DSIFN-CD datasets by the DropBox through the following here:
 
-- LEVIR-CD-256: [click here to download](https://www.dropbox.com/sh/lnjxpflvgjijwoj/AAAgWr3xgOjqtTWPVpbLVcfNa?dl=0)
-- DSIFN-CD-256: [click here to download](https://www.dropbox.com/sh/i54h8kkpgar1s07/AACK5_jLGS3cP9ocgOMEUJcNa?dl=0)
+- LEVIR-CD-256: [`click here to download`](https://www.dropbox.com/sh/lnjxpflvgjijwoj/AAAgWr3xgOjqtTWPVpbLVcfNa?dl=0)
+- DSIFN-CD-256: [`click here to download`](https://www.dropbox.com/sh/i54h8kkpgar1s07/AACK5_jLGS3cP9ocgOMEUJcNa?dl=0)
 
 Since the file sizes are large, I recommed to use command line and cosider downloading the zip file as follows (in linux):
 
@@ -199,7 +199,7 @@ To download DSIFN-CD dataset run following command in linux-terminal:
 wget https://www.dropbox.com/sh/i54h8kkpgar1s07/AAA0rBAFl9UZ3U3Z1_o46UT0a/DSIFN-CD-256.zip
 ```
 
-For your reference, I have also attached the inks to original LEVIR-CD and DSIFN-CD here: [LEVIR-CD](https://justchenhao.github.io/LEVIR/) and [DSIFN-CD](https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images/tree/master/dataset).
+For your reference, I have also attached the inks to original LEVIR-CD and DSIFN-CD here: [`LEVIR-CD`](https://justchenhao.github.io/LEVIR/) and [`DSIFN-CD`](https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images/tree/master/dataset).
 
 
 ## :speech_balloon: License
