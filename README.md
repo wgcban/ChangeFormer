@@ -3,7 +3,7 @@
 # ChangeFormer: A Transformer-Based Siamese Network for Change Detection 
 
 
-[Wele Gedara Chaminda Bandara](https://www.wgcban.com/), and [Vishal M. Patel](https://engineering.jhu.edu/vpatel36/sciencex_teams/vishalpatel/)
+[`Wele Gedara Chaminda Bandara`](https://www.wgcban.com/), and [Vishal M. Patel](https://engineering.jhu.edu/vpatel36/sciencex_teams/vishalpatel/)
 
 :notebook_with_decorative_cover: **Accepted for publication at [IGARSS-22](https://www.igarss2022.org/default.php), Kuala Lumpur, Malaysia.**
 
