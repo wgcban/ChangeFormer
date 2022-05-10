@@ -111,6 +111,8 @@ class CDDataset(ImageDataset):
         L_path = get_label_path(self.root_dir, self.img_name_list[index % self.A_size])
 
         label = np.array(Image.open(L_path), dtype=np.uint8)
+        # if you are getting error because of dim mismatch ad [:,:,0] at the end
+
         #  二分类中，前景标注为255
         if self.label_transform == 'norm':
             label = label // 255
