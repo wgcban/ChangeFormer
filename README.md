@@ -12,7 +12,9 @@ Here, we provide the pytorch implementation of the paper: A Transformer-Based Si
 
 :notebook_with_decorative_cover: For more information, please see our paper at [`arxiv`](https://arxiv.org/pdf/2201.01293.pdf). 
 
-| :memo:        | Have a look at our new Semi-supervised Change Detection paper also! ['SemiCD']()       |
+## Updates
+
+| :zap:        | Have a look at our new Semi-supervised Change Detection paper also! ['SemiCD']()       |
 |---------------|:------------------------|
 
 
