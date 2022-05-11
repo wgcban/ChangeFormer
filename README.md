@@ -15,7 +15,6 @@ Here, we provide the pytorch implementation of the paper: A Transformer-Based Si
 ## Updates
 
 | :zap:        | Have a look at our new Semi-supervised Change Detection paper also! [`SemiCD`](https://github.com/wgcban/SemiCD)       |
-|---------------|:------------------------|
 | :zap:        | ChangeFormer has been accepted for publication at [`IGARSS-22`](https://www.igarss2022.org/default.php), Kuala Lumpur, Malaysia.       |
 |---------------|:------------------------|
 
