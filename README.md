@@ -10,7 +10,7 @@
 
 Here, we provide the pytorch implementation of the paper: A Transformer-Based Siamese Network for Change Detection.
 
-:notebook_with_decorative_cover: For more information, please see our paper at [`arxiv`](https://arxiv.org/pdf/2201.01293.pdf). 
+:notebook_with_decorative_cover: For more information, please see our paper at [`arxiv`](https://arxiv.org/pdf/2201.01293.pdf) and [`Video on YouTube`](https://www.youtube.com/watch?v=SkiNoTrSmQM). 
 
 ## Updates
 
