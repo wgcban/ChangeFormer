@@ -89,9 +89,9 @@ After that, you can find the prediction results in `samples/predict_DSIFN`.
 When we initialy train our ChangeFormer, we initialized some parameters of the network with a model pre-trained on the RGB segmentation (ADE 160k dataset) to get faster convergence.
 
 You can download the pre-trained model [`here`](https://www.dropbox.com/s/undtrlxiz7bkag5/pretrained_changeformer.pt?dl=0).
-'''
+```
 wget https://www.dropbox.com/s/undtrlxiz7bkag5/pretrained_changeformer.pt
-'''
+```
 
 Then, update the path to the pre-trained model by updating the ``path`` argument in the ``run_ChangeFormer_LEVIR.sh``.
 Here:
