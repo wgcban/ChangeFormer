@@ -197,18 +197,18 @@ Change detection data set with pixel-level binary labels；
 
 You can download the processed LEVIR-CD and DSIFN-CD datasets by the DropBox through the following here:
 
-- LEVIR-CD-256: [`click here to download`](https://www.dropbox.com/sh/lnjxpflvgjijwoj/AAAgWr3xgOjqtTWPVpbLVcfNa?dl=0)
-- DSIFN-CD-256: [`click here to download`](https://www.dropbox.com/sh/i54h8kkpgar1s07/AACK5_jLGS3cP9ocgOMEUJcNa?dl=0)
+- LEVIR-CD-256: [`click here to download`](https://www.dropbox.com/s/18fb5jo0npu5evm/LEVIR-CD256.zip)
+- DSIFN-CD-256: [`click here to download`](https://www.dropbox.com/s/18fb5jo0npu5evm/LEVIR-CD256.zip)
 
 Since the file sizes are large, I recommed to use command line and cosider downloading the zip file as follows (in linux):
 
 To download LEVIR-CD dataset run following command in linux-terminal:
 ```cmd
-wget https://www.dropbox.com/s/h9jl2ygznsaeg5d/LEVIR-CD-256.zip
+wget https://www.dropbox.com/s/18fb5jo0npu5evm/LEVIR-CD256.zip
 ```
 To download DSIFN-CD dataset run following command in linux-terminal:
 ```cmd
-wget https://www.dropbox.com/sh/i54h8kkpgar1s07/AAA0rBAFl9UZ3U3Z1_o46UT0a/DSIFN-CD-256.zip
+wget https://www.dropbox.com/s/18fb5jo0npu5evm/LEVIR-CD256.zip
 ```
 
 For your reference, I have also attached the inks to original LEVIR-CD and DSIFN-CD here: [`LEVIR-CD`](https://justchenhao.github.io/LEVIR/) and [`DSIFN-CD`](https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images/tree/master/dataset).
