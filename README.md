@@ -15,6 +15,7 @@ Here, we provide the pytorch implementation of the paper: A Transformer-Based Si
 ## Updates
 | :zap:        | Our new Change Detection paers with Denoising Diffusion Probabilistic Models is now online: [`DDPM-CD`](https://github.com/wgcban/ddpm-cd)       |
 |---------------|:------------------------|
+
 | :zap:        | Our new Semi-supervised Change Detection paper is now online: [`SemiCD`](https://github.com/wgcban/SemiCD)       |
 |---------------|:------------------------|
 
