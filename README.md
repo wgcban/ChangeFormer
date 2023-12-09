@@ -1,13 +1,14 @@
 ## ChangeFormer: A Transformer-Based Siamese Network for Change Detection
 > [A Transformer-Based Siamese Network for Change Detection](https://arxiv.org/abs/2201.01293)
+
 > [Wele Gedara Chaminda Bandara](https://www.wgcban.com/), and [Vishal M. Patel](https://engineering.jhu.edu/vpatel36/sciencex_teams/vishalpatel/)
+
 > Presented at [IGARSS-22](https://www.igarss2022.org/default.php), Kuala Lumpur, Malaysia.
 
 Useful links:
 - Paper (published): https://ieeexplore.ieee.org/document/9883686
 - Paper (ArXiv): https://arxiv.org/abs/2201.01293
 - Presentation (in YouTube): https://www.youtube.com/watch?v=SkiNoTrSmQM
--  
 
 ## My other Change Detection repos:
 
