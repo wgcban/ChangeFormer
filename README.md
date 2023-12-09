@@ -219,15 +219,16 @@ Code is released for non-commercial and research purposes **only**. For commerci
 
 If you use this code for your research, please cite our paper:
 
-```
-@misc{bandara2022transformerbased,
-      title={A Transformer-Based Siamese Network for Change Detection}, 
-      author={Wele Gedara Chaminda Bandara and Vishal M. Patel},
-      year={2022},
-      eprint={2201.01293},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
-}
+```bibtex
+@INPROCEEDINGS{9883686,
+  author={Bandara, Wele Gedara Chaminda and Patel, Vishal M.},
+  booktitle={IGARSS 2022 - 2022 IEEE International Geoscience and Remote Sensing Symposium}, 
+  title={A Transformer-Based Siamese Network for Change Detection}, 
+  year={2022},
+  volume={},
+  number={},
+  pages={207-210},
+  doi={10.1109/IGARSS46834.2022.9883686}}
 ```
 
 ## Disclaimer
