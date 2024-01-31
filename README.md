@@ -211,6 +211,13 @@ wget https://www.dropbox.com/s/18fb5jo0npu5evm/LEVIR-CD256.zip
 
 For your reference, I have also attached the inks to original LEVIR-CD and DSIFN-CD here: [`LEVIR-CD`](https://justchenhao.github.io/LEVIR/) and [`DSIFN-CD`](https://github.com/GeoZcx/A-deeply-supervised-image-fusion-network-for-change-detection-in-remote-sensing-images/tree/master/dataset).
 
+### Other useful notes
+#### ChangeFormer for multi-class change detection
+If you wish to use ChangeFormer for multi-class change detection, you will need to make a few modifications to the existing codebase, which is designed for binary change detection. There are many discussions in the issues section. The required modifications are (https://github.com/wgcban/ChangeFormer/issues/93#issuecomment-1918609871):
+1. `run_ChangeFormer_cd.sh`: n_class=8 and make it a hyperparameter to python main.py
+2. `models/networks.py`: net = ChangeFormerV6(embed_dim=args.embed_dim, output_nc=args.n_class)
+3. `models/basic_model.py`: Comment out: pred_vis = pred * 255, i.e., modifications to visualisation processing
+4. `models/trainer.py`: Modify: ConfuseMatrixMeter(n_class=self.n_class)
 
 ### License
 
